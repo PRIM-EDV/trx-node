@@ -1,0 +1,13 @@
+version: '3.1'
+
+services:
+  server:
+    build:
+        context: ".."
+        dockerfile: server/Dockerfile
+    container_name: "trx-node"
+    environment:
+      RLD_MAPTOOL_HOSTNAME: ${TRX_MAPTOOL_HOSTNAME}
+      RLD_MAPTOOL_PORT: ${TRX_MAPTOOL_PORT}
+    devices:
+      - "/dev/ttyS0:/dev/ttyS0"
