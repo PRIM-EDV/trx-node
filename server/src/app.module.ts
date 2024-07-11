@@ -1,15 +1,14 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { LoggingModule } from './logging/logging.module';
-import { SerialService } from './serial/serial.service';
-import { WebsocketService } from './websocket/websocket.service';
+import { LoggingModule } from './core/logging/logging.module';
+import { SerialService } from './platform/serial/serial.service';
 
 (global as any).WebSocket = require('ws');
 
 @Module({
   imports: [LoggingModule],
   controllers: [AppController],
-  providers: [AppService, SerialService, WebsocketService],
+  providers: [AppService, SerialService],
 })
 export class AppModule {}
