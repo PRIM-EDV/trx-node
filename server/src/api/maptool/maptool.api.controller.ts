@@ -1,9 +1,13 @@
 import { Injectable } from "@nestjs/common";
-import { AppGateway } from "src/app.gateway";
-import { RpcHandler } from "src/core/rpc/decorators";
+import { Rpc, RpcHandler } from "src/core/rpc/decorators";
+import { WebsocketService } from "src/core/websocket/websocket.service";
 
- @RpcHandler(AppGateway)
+ @RpcHandler(WebsocketService)
  export class MaptoolApiController {
-     constructor(private readonly appGateway: AppGateway) {
+     constructor() {
+     }
+
+     @Rpc()
+     SetMapEntity() {
      }
  }
