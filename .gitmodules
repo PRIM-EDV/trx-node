@@ -4,3 +4,6 @@
 [submodule "protocol"]
 	path = protocol
 	url = https://github.com/PRIM-EDV/trx-protocol
+[submodule "firmware/driver/lora"]
+	path = firmware/driver/lora
+	url = https://github.com/lmoesch/modm-lora
