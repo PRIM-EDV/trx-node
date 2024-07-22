@@ -4,7 +4,6 @@ import { Injectable } from '@nestjs/common';
 import { Subject } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { TrxMessage, Request, Response } from 'proto/trx';
-import { Ws } from 'src/common/interfaces/ws';
 
 const MAPTOOL_HOSTNAME = process.env.MAPTOOL_HOSTNAME ? process.env.MAPTOOL_HOSTNAME : 'localhost';
 const MAPTOOL_PORT = process.env.MAPTOOL_PORT ? process.env.MAPTOOL_PORT : 3800;
@@ -12,7 +11,7 @@ const MAPTOOL_PORT = process.env.MAPTOOL_PORT ? process.env.MAPTOOL_PORT : 3800;
 @Injectable()
 export class MapEntityRpcGateway {
     public onMessage: Subject<TrxMessage> = new Subject<TrxMessage>();
-    public onRequest: Subject<{msgId: string, request: Request}> = new Subject<{msgId: string, request: Request}>();
+    public onRequest: Subject<{ msgId: string, request: Request }> = new Subject<{ msgId: string, request: Request }>();
 
     protected requests: Map<string, (value: Response) => void> = new Map<string, (value: Response) => void>();
 
@@ -26,11 +25,11 @@ export class MapEntityRpcGateway {
     }
 
     public connect() {
-        this.ws = webSocket({url: `ws://${MAPTOOL_HOSTNAME}:${MAPTOOL_PORT}`, openObserver: { next: this.handleWsOpen.bind(this) }});
+        this.ws = webSocket({ url: `ws://${MAPTOOL_HOSTNAME}:${MAPTOOL_PORT}`, openObserver: { next: this.handleWsOpen.bind(this) } });
 
         this.ws.subscribe({
             next: this.handleWsMessage.bind(this),
-            error: (err) => {},
+            error: (err) => { },
             complete: this.handleWsClose.bind(this)
         });
     }
@@ -44,13 +43,13 @@ export class MapEntityRpcGateway {
             const msg: TrxMessage = {
                 id: uuidv4(),
                 request: req
-          }
-    
-          this.requests.set(msg.id, resolve.bind(this));
-          setTimeout(this.rejectOnTimeout.bind(this, msg.id, reject), 5000);
-          this.ws.next({event: 'msg', data: JSON.stringify(TrxMessage.toJSON(msg))});
+            }
+
+            this.requests.set(msg.id, resolve.bind(this));
+            setTimeout(this.rejectOnTimeout.bind(this, msg.id, reject), 5000);
+            this.ws.next({ event: 'msg', data: JSON.stringify(TrxMessage.toJSON(msg)) });
         });
-      }
+    }
 
     private handleWsOpen() {
         this.onOpen.next();
@@ -61,18 +60,18 @@ export class MapEntityRpcGateway {
             id: msgId,
             response: res
         }
-        this.ws.next({event: 'msg', data: JSON.stringify(TrxMessage.toJSON(msg))});
-      }
+        this.ws.next({ event: 'msg', data: JSON.stringify(TrxMessage.toJSON(msg)) });
+    }
 
-    private handleWsMessage(buffer: {event: 'msg', data: string}) {
+    private handleWsMessage(buffer: { event: 'msg', data: string }) {
         const msg = TrxMessage.fromJSON(JSON.parse(buffer.data));
 
-        if(msg.request) {
-            this.onRequest.next({msgId: msg.id, request: msg.request});
+        if (msg.request) {
+            this.onRequest.next({ msgId: msg.id, request: msg.request });
         }
 
-        if(msg.response) {
-            if(this.requests.has(msg.id)) {
+        if (msg.response) {
+            if (this.requests.has(msg.id)) {
                 this.requests.get(msg.id)!(msg.response);
                 this.requests.delete(msg.id);
             }
@@ -87,7 +86,7 @@ export class MapEntityRpcGateway {
     }
 
     private rejectOnTimeout(id: string, reject: (reason?: any) => void) {
-        if(this.requests.delete(id)) {
+        if (this.requests.delete(id)) {
             reject();
         };
     }
