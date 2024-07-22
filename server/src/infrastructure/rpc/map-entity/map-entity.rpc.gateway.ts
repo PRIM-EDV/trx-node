@@ -10,7 +10,7 @@ const MAPTOOL_HOSTNAME = process.env.MAPTOOL_HOSTNAME ? process.env.MAPTOOL_HOST
 const MAPTOOL_PORT = process.env.MAPTOOL_PORT ? process.env.MAPTOOL_PORT : 3800;
 
 @Injectable()
-export class WebsocketService {
+export class MapEntityRpcGateway {
     public onMessage: Subject<TrxMessage> = new Subject<TrxMessage>();
     public onRequest: Subject<{msgId: string, request: Request}> = new Subject<{msgId: string, request: Request}>();
 

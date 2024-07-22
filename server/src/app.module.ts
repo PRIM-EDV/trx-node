@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { LoggingModule } from './core/logging/logging.module';
 import { ApiModule } from './api/api.module';
-import { WebsocketModule } from './core/websocket/websocket.module';
+import { MapEntityRpcAdapterModule } from './infrastructure/rpc/map-entity/map-entity.rpc.adapter.module';
+import { LoggingModule } from './infrastructure/logging/logging.module';
 
 @Module({
   imports: [
     LoggingModule,
     ApiModule,
-    WebsocketModule
+    MapEntityRpcAdapterModule
   ],
   controllers: [AppController],
   providers: [],

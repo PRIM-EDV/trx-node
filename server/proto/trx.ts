@@ -14,19 +14,39 @@ import {
   SetMapEntity_Request,
   SetMapEntity_Response,
 } from "./trx.entity";
+import {
+  DeleteSquad_Request,
+  DeleteSquad_Response,
+  GetAllSquads_Request,
+  GetAllSquads_Response,
+  SetSquad_Request,
+  SetSquad_Response,
+} from "./trx.squad";
 
 export const protobufPackage = "";
 
 export interface Request {
   setMapEntity?: SetMapEntity_Request | undefined;
   deleteMapEntity?: DeleteMapEntity_Request | undefined;
-  getAllMapEntities?: GetAllMapEntities_Request | undefined;
+  getAllMapEntities?:
+    | GetAllMapEntities_Request
+    | undefined;
+  /** Squad */
+  setSquad?: SetSquad_Request | undefined;
+  deleteSquad?: DeleteSquad_Request | undefined;
+  getAllSquads?: GetAllSquads_Request | undefined;
 }
 
 export interface Response {
   setMapEntity?: SetMapEntity_Response | undefined;
   deleteMapEntity?: DeleteMapEntity_Response | undefined;
-  getAllMapEntities?: GetAllMapEntities_Response | undefined;
+  getAllMapEntities?:
+    | GetAllMapEntities_Response
+    | undefined;
+  /** Squad */
+  setSquad?: SetSquad_Response | undefined;
+  deleteSquad?: DeleteSquad_Response | undefined;
+  getAllSquads?: GetAllSquads_Response | undefined;
 }
 
 export interface Error {
@@ -42,7 +62,14 @@ export interface TrxMessage {
 }
 
 function createBaseRequest(): Request {
-  return { setMapEntity: undefined, deleteMapEntity: undefined, getAllMapEntities: undefined };
+  return {
+    setMapEntity: undefined,
+    deleteMapEntity: undefined,
+    getAllMapEntities: undefined,
+    setSquad: undefined,
+    deleteSquad: undefined,
+    getAllSquads: undefined,
+  };
 }
 
 export const Request = {
@@ -55,6 +82,15 @@ export const Request = {
     }
     if (message.getAllMapEntities !== undefined) {
       GetAllMapEntities_Request.encode(message.getAllMapEntities, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.setSquad !== undefined) {
+      SetSquad_Request.encode(message.setSquad, writer.uint32(34).fork()).ldelim();
+    }
+    if (message.deleteSquad !== undefined) {
+      DeleteSquad_Request.encode(message.deleteSquad, writer.uint32(42).fork()).ldelim();
+    }
+    if (message.getAllSquads !== undefined) {
+      GetAllSquads_Request.encode(message.getAllSquads, writer.uint32(50).fork()).ldelim();
     }
     return writer;
   },
@@ -87,6 +123,27 @@ export const Request = {
 
           message.getAllMapEntities = GetAllMapEntities_Request.decode(reader, reader.uint32());
           continue;
+        case 4:
+          if (tag !== 34) {
+            break;
+          }
+
+          message.setSquad = SetSquad_Request.decode(reader, reader.uint32());
+          continue;
+        case 5:
+          if (tag !== 42) {
+            break;
+          }
+
+          message.deleteSquad = DeleteSquad_Request.decode(reader, reader.uint32());
+          continue;
+        case 6:
+          if (tag !== 50) {
+            break;
+          }
+
+          message.getAllSquads = GetAllSquads_Request.decode(reader, reader.uint32());
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -105,6 +162,9 @@ export const Request = {
       getAllMapEntities: isSet(object.getAllMapEntities)
         ? GetAllMapEntities_Request.fromJSON(object.getAllMapEntities)
         : undefined,
+      setSquad: isSet(object.setSquad) ? SetSquad_Request.fromJSON(object.setSquad) : undefined,
+      deleteSquad: isSet(object.deleteSquad) ? DeleteSquad_Request.fromJSON(object.deleteSquad) : undefined,
+      getAllSquads: isSet(object.getAllSquads) ? GetAllSquads_Request.fromJSON(object.getAllSquads) : undefined,
     };
   },
 
@@ -118,6 +178,15 @@ export const Request = {
     }
     if (message.getAllMapEntities !== undefined) {
       obj.getAllMapEntities = GetAllMapEntities_Request.toJSON(message.getAllMapEntities);
+    }
+    if (message.setSquad !== undefined) {
+      obj.setSquad = SetSquad_Request.toJSON(message.setSquad);
+    }
+    if (message.deleteSquad !== undefined) {
+      obj.deleteSquad = DeleteSquad_Request.toJSON(message.deleteSquad);
+    }
+    if (message.getAllSquads !== undefined) {
+      obj.getAllSquads = GetAllSquads_Request.toJSON(message.getAllSquads);
     }
     return obj;
   },
@@ -136,12 +205,28 @@ export const Request = {
     message.getAllMapEntities = (object.getAllMapEntities !== undefined && object.getAllMapEntities !== null)
       ? GetAllMapEntities_Request.fromPartial(object.getAllMapEntities)
       : undefined;
+    message.setSquad = (object.setSquad !== undefined && object.setSquad !== null)
+      ? SetSquad_Request.fromPartial(object.setSquad)
+      : undefined;
+    message.deleteSquad = (object.deleteSquad !== undefined && object.deleteSquad !== null)
+      ? DeleteSquad_Request.fromPartial(object.deleteSquad)
+      : undefined;
+    message.getAllSquads = (object.getAllSquads !== undefined && object.getAllSquads !== null)
+      ? GetAllSquads_Request.fromPartial(object.getAllSquads)
+      : undefined;
     return message;
   },
 };
 
 function createBaseResponse(): Response {
-  return { setMapEntity: undefined, deleteMapEntity: undefined, getAllMapEntities: undefined };
+  return {
+    setMapEntity: undefined,
+    deleteMapEntity: undefined,
+    getAllMapEntities: undefined,
+    setSquad: undefined,
+    deleteSquad: undefined,
+    getAllSquads: undefined,
+  };
 }
 
 export const Response = {
@@ -154,6 +239,15 @@ export const Response = {
     }
     if (message.getAllMapEntities !== undefined) {
       GetAllMapEntities_Response.encode(message.getAllMapEntities, writer.uint32(26).fork()).ldelim();
+    }
+    if (message.setSquad !== undefined) {
+      SetSquad_Response.encode(message.setSquad, writer.uint32(34).fork()).ldelim();
+    }
+    if (message.deleteSquad !== undefined) {
+      DeleteSquad_Response.encode(message.deleteSquad, writer.uint32(42).fork()).ldelim();
+    }
+    if (message.getAllSquads !== undefined) {
+      GetAllSquads_Response.encode(message.getAllSquads, writer.uint32(50).fork()).ldelim();
     }
     return writer;
   },
@@ -186,6 +280,27 @@ export const Response = {
 
           message.getAllMapEntities = GetAllMapEntities_Response.decode(reader, reader.uint32());
           continue;
+        case 4:
+          if (tag !== 34) {
+            break;
+          }
+
+          message.setSquad = SetSquad_Response.decode(reader, reader.uint32());
+          continue;
+        case 5:
+          if (tag !== 42) {
+            break;
+          }
+
+          message.deleteSquad = DeleteSquad_Response.decode(reader, reader.uint32());
+          continue;
+        case 6:
+          if (tag !== 50) {
+            break;
+          }
+
+          message.getAllSquads = GetAllSquads_Response.decode(reader, reader.uint32());
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -204,6 +319,9 @@ export const Response = {
       getAllMapEntities: isSet(object.getAllMapEntities)
         ? GetAllMapEntities_Response.fromJSON(object.getAllMapEntities)
         : undefined,
+      setSquad: isSet(object.setSquad) ? SetSquad_Response.fromJSON(object.setSquad) : undefined,
+      deleteSquad: isSet(object.deleteSquad) ? DeleteSquad_Response.fromJSON(object.deleteSquad) : undefined,
+      getAllSquads: isSet(object.getAllSquads) ? GetAllSquads_Response.fromJSON(object.getAllSquads) : undefined,
     };
   },
 
@@ -217,6 +335,15 @@ export const Response = {
     }
     if (message.getAllMapEntities !== undefined) {
       obj.getAllMapEntities = GetAllMapEntities_Response.toJSON(message.getAllMapEntities);
+    }
+    if (message.setSquad !== undefined) {
+      obj.setSquad = SetSquad_Response.toJSON(message.setSquad);
+    }
+    if (message.deleteSquad !== undefined) {
+      obj.deleteSquad = DeleteSquad_Response.toJSON(message.deleteSquad);
+    }
+    if (message.getAllSquads !== undefined) {
+      obj.getAllSquads = GetAllSquads_Response.toJSON(message.getAllSquads);
     }
     return obj;
   },
@@ -234,6 +361,15 @@ export const Response = {
       : undefined;
     message.getAllMapEntities = (object.getAllMapEntities !== undefined && object.getAllMapEntities !== null)
       ? GetAllMapEntities_Response.fromPartial(object.getAllMapEntities)
+      : undefined;
+    message.setSquad = (object.setSquad !== undefined && object.setSquad !== null)
+      ? SetSquad_Response.fromPartial(object.setSquad)
+      : undefined;
+    message.deleteSquad = (object.deleteSquad !== undefined && object.deleteSquad !== null)
+      ? DeleteSquad_Response.fromPartial(object.deleteSquad)
+      : undefined;
+    message.getAllSquads = (object.getAllSquads !== undefined && object.getAllSquads !== null)
+      ? GetAllSquads_Response.fromPartial(object.getAllSquads)
       : undefined;
     return message;
   },
