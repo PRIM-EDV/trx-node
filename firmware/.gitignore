@@ -1,0 +1,8 @@
+.sconsign.dblite
+
+protocol/*.cpp
+protocol/*.hpp
+
+modm
+
+*.log
