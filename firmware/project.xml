@@ -7,7 +7,7 @@
     <option name="modm:build:openocd.cfg">conf/openocd.cfg</option>
     <option name="modm:platform:uart:2:buffer.rx">256</option>
     <option name="modm:platform:uart:2:buffer.tx">256</option>
-    <option name="modm:target">stm32f042c6u6</option>
+    <option name="modm:target">stm32f072cbu6</option>
     <option name="modm:processing:protothread:use_fiber">yes</option>
     <option name="modm:nanopb:sources">../protocol/trx.proto,../protocol/trx.entity.proto,../protocol/trx.squad.proto,../protocol/trx.tracker.proto</option>
     <option name="modm:nanopb:path">protocol</option>

@@ -19,7 +19,7 @@ namespace Board::lora2 {
 }
 
 namespace Board::control {
-    ControlThread<decltype(lora1::thread), decltype(lora2::thread)> thread(lora1::thread, lora2::thread);
+    ControlThread<zero::Uart, decltype(lora1::thread), decltype(lora2::thread)> thread(lora1::thread, lora2::thread);
 }
 
 
