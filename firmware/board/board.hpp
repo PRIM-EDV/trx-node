@@ -65,7 +65,7 @@ namespace lora {
 	using Miso = GpioInputB14;
 	using Mosi = GpioOutputB15;
 
-	using Spi = SpiMaster1;
+	using Spi = SpiMaster2;
 }
 
 namespace lora1 {

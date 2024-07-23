@@ -4,5 +4,6 @@ protocol/*.cpp
 protocol/*.hpp
 
 modm
+build/
 
 *.log

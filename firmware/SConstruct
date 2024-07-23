@@ -41,7 +41,7 @@ sources = []
 env.Append(CPPPATH=abspath("protocol"))
 ignored.append("protocol")
 sources += env.NanopbProtofile(
-    sources=['..\\protocol\\trx.proto'],
+    sources=['..\\protocol\\trx.proto', '..\\protocol\\trx.entity.proto', '..\\protocol\\trx.squad.proto', '..\\protocol\\trx.tracker.proto'],
     path=abspath("protocol"))
 # Finding application sources
 sources += env.FindSourceFiles(".", ignorePaths=ignored)
