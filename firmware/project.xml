@@ -5,9 +5,10 @@
   <options>
     <option name="modm:build:build.path">build</option>
     <option name="modm:build:openocd.cfg">conf/openocd.cfg</option>
-    <option name="modm:platform:uart:1:buffer.rx">256</option>
-    <option name="modm:platform:uart:1:buffer.tx">256</option>
+    <option name="modm:platform:uart:2:buffer.rx">256</option>
+    <option name="modm:platform:uart:2:buffer.tx">256</option>
     <option name="modm:target">stm32f042c6u6</option>
+    <option name="modm:processing:protothread:use_fiber">yes</option>
     <option name="modm:nanopb:sources">../protocol/trx.proto</option>
     <option name="modm:nanopb:path">protocol</option>
   </options>
@@ -17,9 +18,8 @@
     <module>modm:platform:clock</module>
     <module>modm:platform:core</module>
     <module>modm:platform:gpio</module>
-    <module>modm:platform:uart:1</module>
+    <module>modm:platform:uart:2</module>
     <module>modm:platform:spi:1</module>
-    <module>modm:platform:spi:2</module>
     <module>modm:processing:protothread</module>
     <module>modm:processing:resumable</module>
     <module>modm:processing</module>
