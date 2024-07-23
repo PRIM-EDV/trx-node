@@ -127,16 +127,6 @@ public:
         Board::zero::Uart::write('\0');
     }
 
-    bool encode_string(pb_ostream_t *stream, const pb_field_t *field, void *const *arg)
-    {
-        const char *str = (const char *)(*arg);
-
-        if (!pb_encode_tag_for_field(stream, field))
-            return false;
-
-        return pb_encode_string(stream, (uint8_t *)str, strlen(str));
-    }
-
 private:
     uint8_t data[8];
     uint8_t status[1];
@@ -156,6 +146,16 @@ private:
         // data[2] = (px << 2) | ((py >>8) & 0x03);
         // data[3] = (py) & 0xFF;
     };
+
+    bool encode_string(pb_ostream_t *stream, const pb_field_t *field, void *const *arg)
+    {
+        const char *str = (const char *)(*arg);
+
+        if (!pb_encode_tag_for_field(stream, field))
+            return false;
+
+        return pb_encode_string(stream, (uint8_t *)str, strlen(str));
+    }
 
     bool
     messageAvailable()
