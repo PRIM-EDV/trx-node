@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { RpcModule } from './core/rpc/rpc-module';
+import { RpcModule } from 'lib/rpc/rpc-module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
