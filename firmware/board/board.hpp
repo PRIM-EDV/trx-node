@@ -120,6 +120,8 @@ initialize()
 	lora::Spi::initialize<SystemClock, 6000000ul>();
 
 	// Serial
+	zero::Uart::connect<zero::Tx::Tx, zero::Rx::Rx>();
+	zero::Uart::initialize<SystemClock, 9600_Bd>();
 }
 
 }
