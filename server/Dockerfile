@@ -1,4 +1,4 @@
-FROM node:16.13.0
+FROM node:22.6.0
 
 RUN apt update && apt install protobuf-compiler -y
 
@@ -9,11 +9,12 @@ COPY ./server/*.json ./
 RUN npm install
 
 # Build server
+COPY ./server/lib ./lib
 COPY ./server/src ./src
 COPY ./protocol ../protocol
 
 # Build protocol
-RUN npm run proto:generate:docker
+RUN npm run proto:generate
 
 # Run startscript
 COPY ./server/run.sh ./

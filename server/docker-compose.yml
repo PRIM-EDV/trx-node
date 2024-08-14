@@ -10,4 +10,4 @@ services:
       RLD_MAPTOOL_HOSTNAME: ${TRX_MAPTOOL_HOSTNAME}
       RLD_MAPTOOL_PORT: ${TRX_MAPTOOL_PORT}
     devices:
-      - "/dev/ttyS0:/dev/ttyS0"
+      - "/dev/ttyS3:/dev/ttyS0"
