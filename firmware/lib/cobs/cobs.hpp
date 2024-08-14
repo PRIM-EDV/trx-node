@@ -53,6 +53,8 @@ uint8_t cobs_decode(uint8_t *data, uint8_t nbBytes, uint8_t *buffer)
             }
         }
     }
+    
+    return codep - buffer;
 }
 
 #endif

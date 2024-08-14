@@ -100,6 +100,23 @@ public:
         RF_END_RETURN(0);
     };
 
+    ResumableResult<uint8_t>
+    setMapEntity(MapEntity mapEntity)
+    {
+        RF_BEGIN();
+
+        // uint16_t px = (shared::longitude != 0) ? shared::px : 0;
+        // uint16_t py = (shared::latitude != 0) ? shared::py : 0;
+
+        data[0] = mapEntity.entity.squad.trackerId;
+        data[1] = (px >> 6) & 0x0F;
+        data[2] = (px << 2) | ((py >>8) & 0x03);
+        data[3] = (py) & 0xFF;
+
+        RF_END_RETURN(0);
+    };
+
+
     void setTracker(uint8_t *data)
     {
         // generate protobuf message
