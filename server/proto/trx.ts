@@ -22,6 +22,7 @@ import {
   SetSquad_Request,
   SetSquad_Response,
 } from "./trx.squad";
+import { SetTracker_Request, SetTracker_Response } from "./trx.tracker";
 
 export const protobufPackage = "";
 
@@ -34,7 +35,11 @@ export interface Request {
   /** Squad */
   setSquad?: SetSquad_Request | undefined;
   deleteSquad?: DeleteSquad_Request | undefined;
-  getAllSquads?: GetAllSquads_Request | undefined;
+  getAllSquads?:
+    | GetAllSquads_Request
+    | undefined;
+  /** Tracker */
+  setTracker?: SetTracker_Request | undefined;
 }
 
 export interface Response {
@@ -46,7 +51,11 @@ export interface Response {
   /** Squad */
   setSquad?: SetSquad_Response | undefined;
   deleteSquad?: DeleteSquad_Response | undefined;
-  getAllSquads?: GetAllSquads_Response | undefined;
+  getAllSquads?:
+    | GetAllSquads_Response
+    | undefined;
+  /** Tracker */
+  setTracker?: SetTracker_Response | undefined;
 }
 
 export interface Error {
@@ -69,6 +78,7 @@ function createBaseRequest(): Request {
     setSquad: undefined,
     deleteSquad: undefined,
     getAllSquads: undefined,
+    setTracker: undefined,
   };
 }
 
@@ -91,6 +101,9 @@ export const Request = {
     }
     if (message.getAllSquads !== undefined) {
       GetAllSquads_Request.encode(message.getAllSquads, writer.uint32(50).fork()).ldelim();
+    }
+    if (message.setTracker !== undefined) {
+      SetTracker_Request.encode(message.setTracker, writer.uint32(58).fork()).ldelim();
     }
     return writer;
   },
@@ -144,6 +157,13 @@ export const Request = {
 
           message.getAllSquads = GetAllSquads_Request.decode(reader, reader.uint32());
           continue;
+        case 7:
+          if (tag !== 58) {
+            break;
+          }
+
+          message.setTracker = SetTracker_Request.decode(reader, reader.uint32());
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -165,6 +185,7 @@ export const Request = {
       setSquad: isSet(object.setSquad) ? SetSquad_Request.fromJSON(object.setSquad) : undefined,
       deleteSquad: isSet(object.deleteSquad) ? DeleteSquad_Request.fromJSON(object.deleteSquad) : undefined,
       getAllSquads: isSet(object.getAllSquads) ? GetAllSquads_Request.fromJSON(object.getAllSquads) : undefined,
+      setTracker: isSet(object.setTracker) ? SetTracker_Request.fromJSON(object.setTracker) : undefined,
     };
   },
 
@@ -187,6 +208,9 @@ export const Request = {
     }
     if (message.getAllSquads !== undefined) {
       obj.getAllSquads = GetAllSquads_Request.toJSON(message.getAllSquads);
+    }
+    if (message.setTracker !== undefined) {
+      obj.setTracker = SetTracker_Request.toJSON(message.setTracker);
     }
     return obj;
   },
@@ -214,6 +238,9 @@ export const Request = {
     message.getAllSquads = (object.getAllSquads !== undefined && object.getAllSquads !== null)
       ? GetAllSquads_Request.fromPartial(object.getAllSquads)
       : undefined;
+    message.setTracker = (object.setTracker !== undefined && object.setTracker !== null)
+      ? SetTracker_Request.fromPartial(object.setTracker)
+      : undefined;
     return message;
   },
 };
@@ -226,6 +253,7 @@ function createBaseResponse(): Response {
     setSquad: undefined,
     deleteSquad: undefined,
     getAllSquads: undefined,
+    setTracker: undefined,
   };
 }
 
@@ -248,6 +276,9 @@ export const Response = {
     }
     if (message.getAllSquads !== undefined) {
       GetAllSquads_Response.encode(message.getAllSquads, writer.uint32(50).fork()).ldelim();
+    }
+    if (message.setTracker !== undefined) {
+      SetTracker_Response.encode(message.setTracker, writer.uint32(58).fork()).ldelim();
     }
     return writer;
   },
@@ -301,6 +332,13 @@ export const Response = {
 
           message.getAllSquads = GetAllSquads_Response.decode(reader, reader.uint32());
           continue;
+        case 7:
+          if (tag !== 58) {
+            break;
+          }
+
+          message.setTracker = SetTracker_Response.decode(reader, reader.uint32());
+          continue;
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -322,6 +360,7 @@ export const Response = {
       setSquad: isSet(object.setSquad) ? SetSquad_Response.fromJSON(object.setSquad) : undefined,
       deleteSquad: isSet(object.deleteSquad) ? DeleteSquad_Response.fromJSON(object.deleteSquad) : undefined,
       getAllSquads: isSet(object.getAllSquads) ? GetAllSquads_Response.fromJSON(object.getAllSquads) : undefined,
+      setTracker: isSet(object.setTracker) ? SetTracker_Response.fromJSON(object.setTracker) : undefined,
     };
   },
 
@@ -344,6 +383,9 @@ export const Response = {
     }
     if (message.getAllSquads !== undefined) {
       obj.getAllSquads = GetAllSquads_Response.toJSON(message.getAllSquads);
+    }
+    if (message.setTracker !== undefined) {
+      obj.setTracker = SetTracker_Response.toJSON(message.setTracker);
     }
     return obj;
   },
@@ -370,6 +412,9 @@ export const Response = {
       : undefined;
     message.getAllSquads = (object.getAllSquads !== undefined && object.getAllSquads !== null)
       ? GetAllSquads_Response.fromPartial(object.getAllSquads)
+      : undefined;
+    message.setTracker = (object.setTracker !== undefined && object.setTracker !== null)
+      ? SetTracker_Response.fromPartial(object.setTracker)
       : undefined;
     return message;
   },
