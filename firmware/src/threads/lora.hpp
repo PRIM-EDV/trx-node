@@ -85,11 +85,9 @@ public:
     };
 
     ResumableResult<uint8_t>
-    sendMessage()
+    sendMessage(uint8_t *data)
     {
         RF_BEGIN();
-
-        buildPacket();
 
         RF_CALL(modem.setPayloadLength(4));
         RF_CALL(modem.sendPacket(data, 4));
@@ -105,17 +103,46 @@ public:
     {
         RF_BEGIN();
 
-        // uint16_t px = (shared::longitude != 0) ? shared::px : 0;
-        // uint16_t py = (shared::latitude != 0) ? shared::py : 0;
-
         data[0] = mapEntity.entity.squad.trackerId;
-        data[1] = (px >> 6) & 0x0F;
-        data[2] = (px << 2) | ((py >>8) & 0x03);
-        data[3] = (py) & 0xFF;
+        data[1] = (mapEntity.position.x >> 6) & 0x0F;
+        data[2] = (mapEntity.position.x << 2) | ((mapEntity.position.y >> 8) & 0x03);
+        data[3] = (mapEntity.position.y) & 0xFF;
+
+        RF_CALL(sendMessage(data));
 
         RF_END_RETURN(0);
     };
 
+private:
+    uint8_t data[8];
+    uint8_t status[1];
+    uint8_t message_bufer[128];
+    uint8_t encoding_buffer[128];
+
+    ShortTimeout timeout;
+    E32x00Mx0s<SpiMaster, Cs, RxEn, TxEn> modem;
+
+    bool encode_string(pb_ostream_t *stream, const pb_field_t *field, void *const *arg)
+    {
+        const char *str = (const char *)(*arg);
+
+        if (!pb_encode_tag_for_field(stream, field))
+            return false;
+
+        return pb_encode_string(stream, (uint8_t *)str, strlen(str));
+    }
+
+    bool
+    messageAvailable()
+    {
+        return D0::read();
+    }
+
+    bool
+    messageSent()
+    {
+        return D0::read();
+    }
 
     void setTracker(uint8_t *data)
     {
@@ -142,48 +169,6 @@ public:
 
         Board::zero::Uart::write(encoding_buffer, bytes_encoded);
         Board::zero::Uart::write('\0');
-    }
-
-private:
-    uint8_t data[8];
-    uint8_t status[1];
-    uint8_t message_bufer[128];
-    uint8_t encoding_buffer[128];
-
-    ShortTimeout timeout;
-    E32x00Mx0s<SpiMaster, Cs, RxEn, TxEn> modem;
-
-    void
-    buildPacket() {
-        // uint16_t px = (shared::longitude != 0) ? shared::px : 0;
-        // uint16_t py = (shared::latitude != 0) ? shared::py : 0;
-
-        // data[0] = shared::trackerId;
-        // data[1] = (px >> 6) & 0x0F;
-        // data[2] = (px << 2) | ((py >>8) & 0x03);
-        // data[3] = (py) & 0xFF;
-    };
-
-    bool encode_string(pb_ostream_t *stream, const pb_field_t *field, void *const *arg)
-    {
-        const char *str = (const char *)(*arg);
-
-        if (!pb_encode_tag_for_field(stream, field))
-            return false;
-
-        return pb_encode_string(stream, (uint8_t *)str, strlen(str));
-    }
-
-    bool
-    messageAvailable()
-    {
-        return D0::read();
-    }
-
-    bool
-    messageSent()
-    {
-        return D0::read();
     }
 };
 

@@ -48,7 +48,7 @@ public:
                 {
                     if (c == '\0')
                     {
-                        // RF_CALL(parse());
+                        PT_CALL(handleMessage());
                         message.clear();
                     } else {
                         message += (char)c;
@@ -61,7 +61,10 @@ public:
         PT_END();
     };
 
-    void handleMessage() {
+    ResumableResult<void>
+    handleMessage() {
+        RF_BEGIN();
+
         uint8_t bytes_decoded = cobs_decode((uint8_t*)message.data, message.size, decoded_buffer);
 
         TrxMessage trxMessage = TrxMessage_init_zero;
@@ -72,7 +75,7 @@ public:
             switch (trxMessage.which_message)
             {
                 case TrxMessage_request_tag:
-                    handleRequest(trxMessage);
+                    RF_CALL(handleRequest(trxMessage));
                 case TrxMessage_response_tag:
                 case TrxMessage_error_tag:
                     break;
@@ -80,18 +83,25 @@ public:
                     break;
             }
         }
+
+        RF_END();
     };
 
-    void handleRequest(TrxMessage& trxMessage) {
+    ResumableResult<void>
+    handleRequest(TrxMessage& trxMessage) {
+        RF_BEGIN();
+
         switch (trxMessage.message.request.which_request)
         {
         case Request_setMapEntity_tag:
-            // modem1.setTracker(trxMessage.message.request.request.setTracker);
+            RF_CALL(modem1.setMapEntity(trxMessage.message.request.request.setMapEntity.entity.entity));
             break;
         
         default:
             break;
         }
+
+        RF_END();
     }
 
 private:
