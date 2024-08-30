@@ -1,14 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { TrackerRpcGateway } from "./tracker.rpc.gateway";
-import { Tracker } from "proto/trx.tracker";
 import { ITrackerRpcAdapter } from "src/core/map-entity/interfaces/tracker.rpc.adapter.interface";
+import { MapEntity } from "proto/trx.entity";
 
 @Injectable()
 export class TrackerRpcAdapter implements ITrackerRpcAdapter {
 
     constructor(private readonly gateway: TrackerRpcGateway) { }
     
-    public async setTracker(tracker: Tracker) {
+    public async setMapEntity(entity: MapEntity): Promise<void> {
         try {
             const req = {};
             // const req: Request = {
