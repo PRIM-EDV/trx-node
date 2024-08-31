@@ -11,7 +11,7 @@ namespace Board
 
 namespace zero
 {
-    modm::IODeviceWrapper<Uart, modm::IOBuffer::BlockIfFull> IODevice;
+    modm::IODeviceWrapper<Uart, modm::IOBuffer::DiscardIfFull> IODevice;
 	modm::IOStream ioStream(IODevice);
 }
 

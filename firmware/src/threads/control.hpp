@@ -13,6 +13,7 @@
 #include <pb_decode.h>
 
 #include "lib/buffer/message_buffer.hpp"
+#include "protocol/trx.pb.hpp"  
 
 
 using namespace modm;
@@ -94,7 +95,7 @@ public:
         switch (trxMessage.message.request.which_request)
         {
         case Request_setMapEntity_tag:
-            RF_CALL(modem1.setMapEntity(trxMessage.message.request.request.setMapEntity.entity.entity));
+            RF_CALL(modem1.setMapEntity(trxMessage.message.request.request.setMapEntity.entity));
             break;
         
         default:

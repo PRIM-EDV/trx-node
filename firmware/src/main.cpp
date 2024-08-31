@@ -1,3 +1,5 @@
+#define MODM_PROTOTHREAD_STACK_SIZE 2048
+
 #include <modm/processing.hpp>
 #include <modm/processing/protothread.hpp>
 
@@ -27,9 +29,10 @@ int main()
 {
     Board::initialize();
 
-    lora1::thread.initialize();
+    // lora1::thread.initialize();
     lora2::thread.initialize();
     control::thread.initialize();
 
     fiber::Scheduler::run();
+
 }

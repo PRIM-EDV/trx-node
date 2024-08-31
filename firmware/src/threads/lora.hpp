@@ -21,6 +21,16 @@
 
 using namespace modm;
 
+bool encode_string(pb_ostream_t *stream, const pb_field_t *field, void *const *arg)
+{
+    const char *str = (const char *)(*arg);
+
+    if (!pb_encode_tag_for_field(stream, field))
+        return false;
+
+    return pb_encode_string(stream, (uint8_t *)str, strlen(str));
+}
+
 template <typename SpiMaster, typename Cs, typename D0, typename RxEn, typename TxEn>
 class LoraThread : public modm::pt::Protothread, private modm::NestedResumable<3>
 {
@@ -58,12 +68,22 @@ public:
 
         while (1)
         {
-            PT_WAIT_UNTIL(messageAvailable());
+            PT_WAIT_UNTIL(messageAvailable() || timeout.isExpired());
+
+            if (timeout.isExpired())
+            {
+                timeout.restart(10s);
+                // modem.read(sx127x::Address::FrLsb, &data[0], 1);
+                // modem.read(sx127x::Address::FrMid, &data[1], 1);
+                // modem.read(sx127x::Address::FrMsb, &data[2], 1);
+                // Board::zero::ioStream << ":" << data[0] << ":" << data[1] << ":" << data[2] << "\n";
+            }   
 
             if (messageAvailable())
             {
                 RF_CALL(receiveMessage(data));
-            }
+                setTracker(data);
+            } 
         };
 
         PT_END();
@@ -114,23 +134,15 @@ public:
     };
 
 private:
+    char uuid_buffer[37];
     uint8_t data[8];
     uint8_t status[1];
-    uint8_t message_bufer[128];
+    uint8_t message_buffer[128];
     uint8_t encoding_buffer[128];
+
 
     ShortTimeout timeout;
     E32x00Mx0s<SpiMaster, Cs, RxEn, TxEn> modem;
-
-    bool encode_string(pb_ostream_t *stream, const pb_field_t *field, void *const *arg)
-    {
-        const char *str = (const char *)(*arg);
-
-        if (!pb_encode_tag_for_field(stream, field))
-            return false;
-
-        return pb_encode_string(stream, (uint8_t *)str, strlen(str));
-    }
 
     bool
     messageAvailable()
@@ -146,6 +158,9 @@ private:
 
     void setTracker(uint8_t *data)
     {
+        // generate UUID
+        uuid::v4(uuid_buffer); 
+
         // generate protobuf message
         Tracker tracker = Tracker_init_default;
         tracker.id = data[0];
@@ -154,22 +169,25 @@ private:
         tracker.position.x = ((data[1] & 0x0f) << 6) | ((data[2] & 0xfc) >> 2);
         tracker.position.y = ((data[2] & 0x03) << 8) | data[3];
 
-        TrxMessage trx_message = TrxMessage_init_default;
-        uuid::v4(trx_message.id.arg);
-        trx_message.id.funcs.encode = encode_string;
+        TrxMessage trx_message = TrxMessage_init_zero;
+        trx_message.id.arg = uuid_buffer;
+        trx_message.id.funcs.encode = &encode_string;
 
         trx_message.which_message = TrxMessage_request_tag;
         trx_message.message.request.which_request = Request_setTracker_tag;
+        trx_message.message.request.request.setTracker = SetTracker_Request_init_default;
         trx_message.message.request.request.setTracker.has_tracker = true;
-        trx_message.message.request.request.setTracker = tracker;
+        trx_message.message.request.request.setTracker.tracker = tracker;
 
-        pb_ostream_t pb_ostream = pb_ostream_from_buffer(message_bufer, sizeof(message_bufer));
+        pb_ostream_t pb_ostream = pb_ostream_from_buffer(message_buffer, sizeof(message_buffer));
         pb_encode(&pb_ostream, TrxMessage_fields, &trx_message);
-        uint8_t bytes_encoded = cobs_encode(message_bufer, pb_ostream.bytes_written, encoding_buffer);
+        uint8_t bytes_encoded = cobs_encode(message_buffer, pb_ostream.bytes_written, encoding_buffer);
 
-        Board::zero::Uart::write(encoding_buffer, bytes_encoded);
-        Board::zero::Uart::write('\0');
+        Board::zero::Uart::writeBlocking(encoding_buffer, bytes_encoded);
+        Board::zero::Uart::writeBlocking('\0');
     }
+
+    
 };
 
 #endif
