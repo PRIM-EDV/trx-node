@@ -61,11 +61,11 @@ struct SystemClock
 };
 
 namespace lora {
-	using Sck = GpioOutputB13;
-	using Miso = GpioInputB14;
-	using Mosi = GpioOutputB15;
+	using Sck = GpioOutputA5;
+	using Miso = GpioInputA6;
+	using Mosi = GpioOutputA7;
 
-	using Spi = SpiMaster2;
+	using Spi = SpiMaster1;
 }
 
 namespace lora1 {
@@ -104,7 +104,7 @@ initialize()
 
 	lora1::RxEn::reset();
 	lora1::TxEn::reset();
-	lora1::Nss::reset();
+	lora1::Nss::set();
 
 	// Lora 2
 	lora2::Nss::setOutput();
@@ -113,7 +113,7 @@ initialize()
 
 	lora2::RxEn::reset();
 	lora2::TxEn::reset();
-	lora2::Nss::reset();
+	lora2::Nss::set();
 
     // Serial Lora
 	lora::Spi::connect<lora::Sck::Sck, lora::Mosi::Mosi, lora::Miso::Miso>();
