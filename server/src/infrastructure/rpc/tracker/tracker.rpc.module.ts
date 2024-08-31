@@ -1,17 +1,16 @@
 import { Module } from '@nestjs/common';
-import { TrackerRpcGateway } from './tracker.rpc.gateway';
 import { TrackerRpcAdapter } from './tracker.rpc.adapter';
 
 @Module({
     providers: [
-        TrackerRpcGateway,
+        TrackerRpcAdapter,
         {
             provide: 'TrackerRpcAdapter',
             useClass: TrackerRpcAdapter 
         }
     ],
     exports: [
-        TrackerRpcGateway,
+        TrackerRpcAdapter,
         {
             provide: 'TrackerRpcAdapter',
             useClass: TrackerRpcAdapter 

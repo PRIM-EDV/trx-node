@@ -9,6 +9,7 @@ import * as cobs from 'cobs';
 
 const SERIAL_PORT = process.env.SERIAL_PORT ? process.env.SERIAL_PORT : '/dev/ttyS0';
 
+
 @Injectable()
 export class TrackerRpcGateway {
     public onMessage: Subject<TrxMessage> = new Subject<TrxMessage>();
@@ -20,6 +21,7 @@ export class TrackerRpcGateway {
     private parser: DelimiterParser;
 
     constructor(private readonly log: LoggingService) {
+        console.log("?")
         this.connect()
     }
 
@@ -53,9 +55,13 @@ export class TrackerRpcGateway {
     }
 
     private handleData(data: Buffer) {
+        console.log(data);
         try {
             const decoded = cobs.decode(data);
             const msg = TrxMessage.decode(decoded);
+
+            console.log(decoded);
+            console.log(msg);
 
             if(msg.request) {
                 this.onRequest.next({msgId: msg.id, request: msg.request});
