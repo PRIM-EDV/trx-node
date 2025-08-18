@@ -1,5 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { MapEntity } from "proto/trx.entity";
+import { MapEntity } from "@phobos/protocol";
+
 import { IMapEntityRpcAdapter } from "./interfaces/map-entity.rpc.adapter.interface";
 import { ITrackerRpcAdapter } from "./interfaces/tracker.rpc.adapter.interface";
 

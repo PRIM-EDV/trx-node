@@ -10,3 +10,6 @@
 [submodule "libs/trx-protocol"]
 	path = libs/trx-protocol
 	url = https://github.com/PRIM-EDV/trx-protocol
+[submodule "libs/phobos-maptool/models"]
+	path = libs/phobos-maptool/models
+	url = https://github.com/PRIM-EDV/phobos-maptool-models

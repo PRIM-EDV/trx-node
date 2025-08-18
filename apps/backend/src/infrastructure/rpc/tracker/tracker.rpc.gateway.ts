@@ -1,8 +1,9 @@
 import { Injectable } from "@nestjs/common";
+import { TrxMessage, Request, Response } from "@trx/protocol";
+
 import { v4 as uuidv4 } from 'uuid';
 import { SerialPort, DelimiterParser } from "serialport";
 import { LoggingService } from "src/infrastructure/logging/logging.service";
-import { TrxMessage, Request, Response } from "proto/trx";
 import { Subject } from "rxjs";
 
 import * as cobs from 'cobs';

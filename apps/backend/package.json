@@ -11,9 +11,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
-    "proto:generate": "cpx \"../protocol/*\" ./proto && protoc -I=./proto --ts_proto_opt=messages=true --ts_proto_out=./proto ./proto/trx.proto",
-    "proto:generate:docker": "cpx \"../protocol/*\" ./proto && protoc -I=./proto --ts_proto_opt=messages=true --ts_proto_out=. ./proto/protocol.proto && protoc --ts_proto_opt=useOptionals=true --ts_proto_out=./proto ./proto/rld-node.proto"
+    "start:prod": "node dist/main"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.10",
@@ -21,6 +19,8 @@
     "@nestjs/platform-express": "^10.3.10",
     "@nestjs/platform-ws": "^10.3.10",
     "@nestjs/websockets": "^10.3.10",
+    "@phobos/protocol": "^0.1.0",
+    "@trx/protocol": "^0.1.0",
     "cobs": "^0.2.1",
     "reflect-metadata": "^0.2.2",
     "rimraf": "^3.0.2",

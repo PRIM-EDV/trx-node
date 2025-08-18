@@ -6,12 +6,6 @@
 /release
 /tmp
 /out-tsc
-/server/proto/*.proto
-# Only exists if Bazel was run
-/bazel-out
-
-# dependencies
-node_modules
 
 # profiling files
 chrome-profiler-events.json
@@ -35,11 +29,13 @@ speed-measure-plugin.json
 !.vscode/extensions.json
 .history/*
 
+#
 logs
 
-# misc
-/.sass-cache
-/connect.lock
+# Node
+node_modules
+package-lock.json
+
 /coverage
 /libpeerconnection.log
 npm-debug.log
@@ -50,5 +46,3 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
-
-dist

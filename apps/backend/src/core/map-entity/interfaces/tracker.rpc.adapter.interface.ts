@@ -1,5 +1,5 @@
-import { MapEntity } from "proto/trx.entity";
+import { Entity } from "@trx/protocol";
 
 export interface ITrackerRpcAdapter {
-    setMapEntity(entity: MapEntity): Promise<void>;
+    setMapEntity(entity: Entity): Promise<void>;
 }

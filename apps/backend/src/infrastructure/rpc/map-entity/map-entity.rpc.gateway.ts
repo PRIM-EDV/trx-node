@@ -1,9 +1,10 @@
+import { Injectable } from '@nestjs/common';
+import { TrxMessage, Request, Response } from '@trx/protocol';
+
 import { v4 as uuidv4 } from 'uuid';
 
-import { Injectable } from '@nestjs/common';
 import { Subject } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { TrxMessage, Request, Response } from 'proto/trx';
 
 const MAPTOOL_HOSTNAME = process.env.MAPTOOL_HOSTNAME ? process.env.MAPTOOL_HOSTNAME : 'localhost';
 const MAPTOOL_PORT = process.env.MAPTOOL_PORT ? process.env.MAPTOOL_PORT : 3800;
