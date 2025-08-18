@@ -4,3 +4,9 @@
 [submodule "firmware/driver/lora"]
 	path = firmware/driver/lora
 	url = https://github.com/lmoesch/modm-lora
+[submodule "libs/phobos-protocol"]
+	path = libs/phobos-protocol
+	url = https://github.com/PRIM-EDV/phobos-protocol
+[submodule "libs/trx-protocol"]
+	path = libs/trx-protocol
+	url = https://github.com/PRIM-EDV/trx-protocol
