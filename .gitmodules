@@ -13,3 +13,6 @@
 [submodule "libs/phobos-maptool/models"]
 	path = libs/phobos-maptool/models
 	url = https://github.com/PRIM-EDV/phobos-maptool-models
+[submodule "libs/phobos-maptool/protocol"]
+	path = libs/phobos-maptool/protocol
+	url = https://github.com/PRIM-EDV/phobos-maptool-protocol
