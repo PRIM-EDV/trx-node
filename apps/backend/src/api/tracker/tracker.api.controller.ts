@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Request } from "proto/trx";
+import { Request } from "@trx/protocol";
 import { MapEntityService } from "src/core/map-entity/map-entity.service";
 import { TrackerRpcGateway } from "src/infrastructure/rpc/tracker/tracker.rpc.gateway";
 
@@ -13,9 +13,9 @@ export class TrackerApiService {
     }
 
     private handleRequest({ msgId, request }: { msgId: string, request: Request }) {
-        if (request.setTracker) {
-            const tracker = request.setTracker.tracker;
-            this.mapEntity.updatePosition(tracker.id, tracker.position);
+        if (request.setEntity) {
+            const entity = request.setEntity.entity;
+            this.mapEntity.updatePosition(entity.id, entity.position);
         }
     }
 }

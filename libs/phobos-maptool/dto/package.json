@@ -1,0 +1,17 @@
+{
+  "name": "@phobos-maptool/dto",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@phobos-maptool/models": "^0.1.0",
+    "@phobos-maptool/protocol": "^0.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  },
+  "private": true
+}

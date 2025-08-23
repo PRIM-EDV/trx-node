@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TrxMessage, Request, Response } from '@trx/protocol';
+import { MaptoolMessage, Request, Response } from '@phobos-maptool/protocol';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -11,7 +11,7 @@ const MAPTOOL_PORT = process.env.MAPTOOL_PORT ? process.env.MAPTOOL_PORT : 3800;
 
 @Injectable()
 export class MapEntityRpcGateway {
-    public onMessage: Subject<TrxMessage> = new Subject<TrxMessage>();
+    public onMessage: Subject<MaptoolMessage> = new Subject<MaptoolMessage>();
     public onRequest: Subject<{ msgId: string, request: Request }> = new Subject<{ msgId: string, request: Request }>();
 
     protected requests: Map<string, (value: Response) => void> = new Map<string, (value: Response) => void>();
@@ -41,14 +41,14 @@ export class MapEntityRpcGateway {
 
     public async request(req: Request): Promise<Response> {
         return new Promise((resolve, reject) => {
-            const msg: TrxMessage = {
+            const msg: MaptoolMessage = {
                 id: uuidv4(),
                 request: req
             }
 
             this.requests.set(msg.id, resolve.bind(this));
             setTimeout(this.rejectOnTimeout.bind(this, msg.id, reject), 5000);
-            this.ws.next({ event: 'msg', data: JSON.stringify(TrxMessage.toJSON(msg)) });
+            this.ws.next({ event: 'msg', data: JSON.stringify(MaptoolMessage.toJSON(msg)) });
         });
     }
 
@@ -57,15 +57,15 @@ export class MapEntityRpcGateway {
     }
 
     public respond(clientId: string, msgId: string, res: Response) {
-        const msg: TrxMessage = {
+        const msg: MaptoolMessage = {
             id: msgId,
             response: res
         }
-        this.ws.next({ event: 'msg', data: JSON.stringify(TrxMessage.toJSON(msg)) });
+        this.ws.next({ event: 'msg', data: JSON.stringify(MaptoolMessage.toJSON(msg)) });
     }
 
     private handleWsMessage(buffer: { event: 'msg', data: string }) {
-        const msg = TrxMessage.fromJSON(JSON.parse(buffer.data));
+        const msg = MaptoolMessage.fromJSON(JSON.parse(buffer.data));
 
         if (msg.request) {
             this.onRequest.next({ msgId: msg.id, request: msg.request });

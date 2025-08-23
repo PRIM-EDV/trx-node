@@ -13,6 +13,9 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "lerna": "^8.2.2"
+    "lerna": "^8.2.2",
+    "ts-proto": "^1.125.0",
+    "ts-protoc-gen": "^0.15.0",
+    "typescript": "^5.7.3"
   }
 }
