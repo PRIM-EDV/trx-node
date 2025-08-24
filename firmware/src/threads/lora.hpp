@@ -32,7 +32,7 @@ bool encode_string(pb_ostream_t *stream, const pb_field_t *field, void *const *a
 }
 
 template <typename SpiMaster, typename Cs, typename D0, typename RxEn, typename TxEn>
-class LoraThread : public modm::pt::Protothread, private modm::NestedResumable<3>
+class LoraThread : public modm::pt::Protothread, protected modm::NestedResumable<4>
 {
 public:
     void
@@ -81,7 +81,7 @@ public:
 
             if (messageAvailable())
             {
-                RF_CALL(receiveMessage(data));
+                PT_CALL(receiveMessage(data));
                 setTracker(data);
             } 
         };
@@ -183,8 +183,8 @@ private:
         pb_encode(&pb_ostream, TrxMessage_fields, &trx_message);
         uint8_t bytes_encoded = cobs_encode(message_buffer, pb_ostream.bytes_written, encoding_buffer);
 
-        Board::zero::Uart::writeBlocking(encoding_buffer, bytes_encoded);
-        Board::zero::Uart::writeBlocking('\0');
+        Board::zero::Uart::write(encoding_buffer, bytes_encoded);
+        Board::zero::Uart::write('\0');
     }
 
     

@@ -64,12 +64,14 @@ public:
 
     ResumableResult<void>
     handleMessage() {
+        uint8_t bytes_decoded;
+        pb_istream_t stream;
+        TrxMessage trxMessage = TrxMessage_init_zero;
+
         RF_BEGIN();
 
-        uint8_t bytes_decoded = cobs_decode((uint8_t*)message.data, message.size, decoded_buffer);
-
-        TrxMessage trxMessage = TrxMessage_init_zero;
-        pb_istream_t stream = pb_istream_from_buffer(decoded_buffer, bytes_decoded);
+        bytes_decoded = cobs_decode((uint8_t*)message.data, message.size, decoded_buffer);
+        stream = pb_istream_from_buffer(decoded_buffer, bytes_decoded);
 
         if (pb_decode(&stream, TrxMessage_fields, &trxMessage))
         {
