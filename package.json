@@ -1,0 +1,18 @@
+{
+  "name": "@trx-node/node",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "libs/*",
+    "libs/phobos-maptool/*"
+  ],
+  "scripts": {
+    "build": "npx lerna run build",
+    "start": "npm run start -w apps/backend"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "lerna": "^8.2.2"
+  }
+}

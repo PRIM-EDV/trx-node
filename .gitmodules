@@ -1,9 +1,18 @@
 [submodule "ext/modm"]
 	path = ext/modm
 	url = https://github.com/modm-io/modm
-[submodule "protocol"]
-	path = protocol
-	url = https://github.com/PRIM-EDV/trx-protocol
 [submodule "firmware/driver/lora"]
 	path = firmware/driver/lora
 	url = https://github.com/lmoesch/modm-lora
+[submodule "libs/phobos-protocol"]
+	path = libs/phobos-protocol
+	url = https://github.com/PRIM-EDV/phobos-protocol
+[submodule "libs/trx-protocol"]
+	path = libs/trx-protocol
+	url = https://github.com/PRIM-EDV/trx-protocol
+[submodule "libs/phobos-maptool/models"]
+	path = libs/phobos-maptool/models
+	url = https://github.com/PRIM-EDV/phobos-maptool-models
+[submodule "libs/phobos-maptool/protocol"]
+	path = libs/phobos-maptool/protocol
+	url = https://github.com/PRIM-EDV/phobos-maptool-protocol
