@@ -1,19 +1,21 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 
+import { IMapEntityRpcAdapter } from "src/core/map-entity/interfaces/map-entity.rpc.adapter.interface";
 import { MapEntityService } from "src/core/map-entity/map-entity.service";
-import { MapEntityRpcAdapter } from "src/infrastructure/rpc/map-entity/map-entity.rpc.adapter";
 import { MapEntityRpcGateway } from "src/infrastructure/rpc/map-entity/map-entity.rpc.gateway";
+
+const MapEntityRpcAdapter = () => Inject('MapEntityRpcAdapter');
 
 @Injectable()
 export class MapEntityApiService {
     constructor(
         private readonly gateway: MapEntityRpcGateway,
-        private readonly rpc: MapEntityRpcAdapter,
-        private readonly mapEntity: MapEntityService
+        private readonly mapEntity: MapEntityService,
+        @MapEntityRpcAdapter() private readonly rpc: IMapEntityRpcAdapter,
     ) { }
 
     private async handleOnOpen() {
-        const entities = await this.rpc.getAllMapEntities();
-        this.mapEntity.entities = entities;
+        // const entities = await this.rpc.ge();
+        // this.mapEntity.entities = entities;
     }
 }
