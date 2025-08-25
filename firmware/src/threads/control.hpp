@@ -19,7 +19,7 @@
 using namespace modm;
 
 template <typename Uart, typename Modem1, typename Modem2>
-class ControlThread : public modm::pt::Protothread, private modm::NestedResumable<3>
+class ControlThread : public modm::pt::Protothread, protected modm::NestedResumable<5>
 {
 public:
     ControlThread(Modem1 &modem1, Modem2 &modem2) : modem1(modem1), modem2(modem2) {};
@@ -47,13 +47,17 @@ public:
             {
                 do
                 {
-                    if (c == '\0')
+                    if (message.size > 1 && c == '\0')
                     {
                         PT_CALL(handleMessage());
                         message.clear();
-                    } else {
+                    } else if (c == '\0') {
+                        message.clear();
+                    } else if (message.size > 127)  {
+                        message.clear();
+                    }
+                    else {
                         message += (char)c;
-
                     }
                 } while (Uart::read(c));
             }
@@ -69,7 +73,6 @@ public:
         TrxMessage trxMessage = TrxMessage_init_zero;
 
         RF_BEGIN();
-
         bytes_decoded = cobs_decode((uint8_t*)message.data, message.size, decoded_buffer);
         stream = pb_istream_from_buffer(decoded_buffer, bytes_decoded);
 
@@ -93,17 +96,13 @@ public:
     ResumableResult<void>
     handleRequest(TrxMessage& trxMessage) {
         RF_BEGIN();
-
         switch (trxMessage.message.request.which_request)
         {
             case Request_setEntity_tag:
-                Uart::write('a');
-        // case Request_setMapEntity_tag:
-        //     // RF_CALL(modem1.setMapEntity(trxMessage.message.request.request.setMapEntity.entity));
-        //     break;
-        
-        default:
-            break;
+                RF_CALL(modem1.setMapEntity(trxMessage.message.request.request.setEntity.entity));
+                break;
+            default:
+                break;
         }
 
         RF_END();
