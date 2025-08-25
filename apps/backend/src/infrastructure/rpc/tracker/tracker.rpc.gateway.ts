@@ -22,7 +22,6 @@ export class TrackerRpcGateway {
     private parser: DelimiterParser;
 
     constructor(private readonly log: LoggingService) {
-        console.log("?")
         this.connect()
     }
 
@@ -34,16 +33,17 @@ export class TrackerRpcGateway {
         this.serialport.on('error', () => setTimeout(this.connect.bind(this), 5000));
     }
 
-    public async request(req: Request): Promise<Response> {
+    public async request(req: Request): Promise<any> {
         return new Promise((resolve, reject) => {
             const msg: TrxMessage = {
                 id: uuidv4(),
                 request: req
             }
 
-            this.requests.set(msg.id, resolve.bind(this));
-            setTimeout(this.rejectOnTimeout.bind(this, msg.id, reject), 5000);
+            // this.requests.set(msg.id, resolve.bind(this));
+            // setTimeout(this.rejectOnTimeout.bind(this, msg.id, reject), 5000);
             this.serialport.write(cobs.encode(TrxMessage.encode(msg)));
+            resolve(null);
         });
     }
 
@@ -56,13 +56,9 @@ export class TrackerRpcGateway {
     }
 
     private handleData(data: Buffer) {
-        console.log(data);
         try {
             const decoded = cobs.decode(data);
             const msg = TrxMessage.decode(decoded);
-
-            console.log(decoded);
-            console.log(msg);
 
             if(msg.request) {
                 this.onRequest.next({msgId: msg.id, request: msg.request});

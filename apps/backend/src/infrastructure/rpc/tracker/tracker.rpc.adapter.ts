@@ -8,7 +8,9 @@ import { ITrackerRpcAdapter } from "src/core/map-entity/interfaces/tracker.rpc.a
 @Injectable()
 export class TrackerRpcAdapter implements ITrackerRpcAdapter {
 
-    constructor(private readonly gateway: TrackerRpcGateway) { }
+    constructor(private readonly gateway: TrackerRpcGateway) { 
+        console.log("TrackerRpcAdapter initialized");
+    }
     
     public async setMapEntity(entity: Entity): Promise<void> {
         try {
