@@ -119,14 +119,14 @@ public:
     };
 
     ResumableResult<uint8_t>
-    setMapEntity(MapEntity mapEntity)
+    setMapEntity(Entity entity)
     {
         RF_BEGIN();
 
-        data[0] = mapEntity.entity.squad.trackerId;
-        data[1] = (mapEntity.position.x >> 6) & 0x0F;
-        data[2] = (mapEntity.position.x << 2) | ((mapEntity.position.y >> 8) & 0x03);
-        data[3] = (mapEntity.position.y) & 0xFF;
+        // data[0] = mapEntity.entity.squad.trackerId;
+        // data[1] = (mapEntity.position.x >> 6) & 0x0F;
+        // data[2] = (mapEntity.position.x << 2) | ((mapEntity.position.y >> 8) & 0x03);
+        // data[3] = (mapEntity.position.y) & 0xFF;
 
         RF_CALL(sendMessage(data));
 
@@ -161,30 +161,30 @@ private:
         // generate UUID
         uuid::v4(uuid_buffer); 
 
-        // generate protobuf message
-        Tracker tracker = Tracker_init_default;
-        tracker.id = data[0];
-        tracker.has_position = true;
-        tracker.position = Tracker_Position_init_default;
-        tracker.position.x = ((data[1] & 0x0f) << 6) | ((data[2] & 0xfc) >> 2);
-        tracker.position.y = ((data[2] & 0x03) << 8) | data[3];
+        // // generate protobuf message
+        // Tracker tracker = Tracker_init_default;
+        // tracker.id = data[0];
+        // tracker.has_position = true;
+        // tracker.position = Tracker_Position_init_default;
+        // tracker.position.x = ((data[1] & 0x0f) << 6) | ((data[2] & 0xfc) >> 2);
+        // tracker.position.y = ((data[2] & 0x03) << 8) | data[3];
 
-        TrxMessage trx_message = TrxMessage_init_zero;
-        trx_message.id.arg = uuid_buffer;
-        trx_message.id.funcs.encode = &encode_string;
+        // TrxMessage trx_message = TrxMessage_init_zero;
+        // trx_message.id.arg = uuid_buffer;
+        // trx_message.id.funcs.encode = &encode_string;
 
-        trx_message.which_message = TrxMessage_request_tag;
-        trx_message.message.request.which_request = Request_setTracker_tag;
-        trx_message.message.request.request.setTracker = SetTracker_Request_init_default;
-        trx_message.message.request.request.setTracker.has_tracker = true;
-        trx_message.message.request.request.setTracker.tracker = tracker;
+        // trx_message.which_message = TrxMessage_request_tag;
+        // trx_message.message.request.which_request = Request_setTracker_tag;
+        // trx_message.message.request.request.setTracker = SetTracker_Request_init_default;
+        // trx_message.message.request.request.setTracker.has_tracker = true;
+        // trx_message.message.request.request.setTracker.tracker = tracker;
 
-        pb_ostream_t pb_ostream = pb_ostream_from_buffer(message_buffer, sizeof(message_buffer));
-        pb_encode(&pb_ostream, TrxMessage_fields, &trx_message);
-        uint8_t bytes_encoded = cobs_encode(message_buffer, pb_ostream.bytes_written, encoding_buffer);
+        // pb_ostream_t pb_ostream = pb_ostream_from_buffer(message_buffer, sizeof(message_buffer));
+        // pb_encode(&pb_ostream, TrxMessage_fields, &trx_message);
+        // uint8_t bytes_encoded = cobs_encode(message_buffer, pb_ostream.bytes_written, encoding_buffer);
 
-        Board::zero::Uart::write(encoding_buffer, bytes_encoded);
-        Board::zero::Uart::write('\0');
+        // Board::zero::Uart::write(encoding_buffer, bytes_encoded);
+        // Board::zero::Uart::write('\0');
     }
 
     

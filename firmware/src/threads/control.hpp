@@ -96,9 +96,11 @@ public:
 
         switch (trxMessage.message.request.which_request)
         {
-        case Request_setMapEntity_tag:
-            RF_CALL(modem1.setMapEntity(trxMessage.message.request.request.setMapEntity.entity));
-            break;
+            case Request_setEntity_tag:
+                Uart::write('a');
+        // case Request_setMapEntity_tag:
+        //     // RF_CALL(modem1.setMapEntity(trxMessage.message.request.request.setMapEntity.entity));
+        //     break;
         
         default:
             break;
