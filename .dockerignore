@@ -1,0 +1,5 @@
+firmware/**
+ext/**
+eagle/**
+node_modules/**
+**/node_modules
