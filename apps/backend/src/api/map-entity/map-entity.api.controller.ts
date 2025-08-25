@@ -15,12 +15,12 @@ export class MapEntityApiController {
     ) { }
 
     @Rpc()
-    setMapEntity(client: Ws, req: SetMapEntity_Request) {
+    setMapEntity(req: SetMapEntity_Request) {
         this.mapEntity.setEntity(fromMapEntityDto(req.entity));
     }
 
     @Rpc()
-    deleteMapEntity(client: Ws, req: DeleteMapEntity_Request) {
+    deleteMapEntity(req: DeleteMapEntity_Request) {
         this.mapEntity.remove(fromMapEntityDto(req.entity));
     }
 }

@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { TrackerApiService } from './tracker.api.controller';
+import { TrackerApiController } from './tracker.api.controller';
 import { MapEntityModule } from 'src/core/map-entity/map-entity.module';
 import { TrackerRpcModule } from 'src/infrastructure/rpc/tracker/tracker.rpc.module';
 @Global()
@@ -9,10 +9,10 @@ import { TrackerRpcModule } from 'src/infrastructure/rpc/tracker/tracker.rpc.mod
         TrackerRpcModule
     ],
     providers: [
-        TrackerApiService
+        TrackerApiController
     ],
     exports: [
-        TrackerApiService
+        TrackerApiController
     ]
 })
 export class TrackerApiModule {

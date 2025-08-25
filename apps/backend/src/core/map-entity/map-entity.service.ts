@@ -24,8 +24,8 @@ export class MapEntityService {
         return () => {
             if (this.entities.length === 0) return;
 
-            const entity = this.entities[index];
             index = (index + 1) % this.entities.length;
+            const entity = this.entities[index];
 
             let id: number;
             switch (entity.type) {
@@ -33,7 +33,7 @@ export class MapEntityService {
                     id = this.foeIdMap.get(entity.id)!;
                     break;
                 case MapEntityType.FRIEND:
-                    id = entity.entity.trackerId ?? this.friendIdMap.get(entity.id)!;
+                    id = entity.entity.trackerId > 0? entity.entity.trackerId : this.friendIdMap.get(entity.id)!;
                     break;
                 case MapEntityType.OBJECT:
                     id = this.objectIdMap.get(entity.id)!;

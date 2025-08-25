@@ -17,7 +17,6 @@ export class TrackerRpcAdapter implements ITrackerRpcAdapter {
             const reqquest: Request = {
                 setEntity: { entity }
             };
-
             await this.gateway.request(reqquest);
         } catch {
             console.error("Error occurred while setting entity:", entity);

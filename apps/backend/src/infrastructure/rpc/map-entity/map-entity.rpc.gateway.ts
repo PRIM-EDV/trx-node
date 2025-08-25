@@ -7,7 +7,8 @@ import { Subject } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 
 const MAPTOOL_HOSTNAME = process.env.MAPTOOL_HOSTNAME ? process.env.MAPTOOL_HOSTNAME : 'localhost';
-const MAPTOOL_PORT = process.env.MAPTOOL_PORT ? process.env.MAPTOOL_PORT : 3800;
+const MAPTOOL_PORT = process.env.MAPTOOL_PORT ? process.env.MAPTOOL_PORT : 3002;
+const token = {"token":"eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiIiLCJhdWQiOltdLCJleHAiOjI1OTIwMDAwMDAsImlhdCI6MTc1NjE0MTc4Miwic2NvcGUiOiJvcGVyYXRvciJ9.Ay61VTU-P4pNBei8uKVwF3HQleUvlCEWvykNImdu-JjV05mOHmg7bT7U_sH_oLg60cqL2gXa1XK2vSI4lJcHoUbHGRiHIcYg0jV3aZI_v9yaL_43l9DluBCq9Mhl5DaUOPdVMwPRNM2zpkMPy-lHht_30HOUUd_lYA1ShaxQANuo0z53X-ltsXeL1H2-IxTm1WLRu7fhUqKDv49JOmZBPtiiIZXKZIHqCZYS3OMVJ29hJUpPoVM9vMLbEwTVx3jbNQnkT143v9PikU2Hi7Qjj_er6Nc6PKYFIGQEokyq7gASbnvLGqDzWeCiQ9pMdahUnWxubiLcmB0E9sR-D7y_RQ"}
 
 @Injectable()
 export class MapEntityRpcGateway {
@@ -22,17 +23,27 @@ export class MapEntityRpcGateway {
     private ws!: WebSocketSubject<any>;
 
     constructor() {
+        console.log('MapEntityRpcGateway initialized');
         this.connect()
     }
 
     public connect() {
-        this.ws = webSocket({ url: `ws://${MAPTOOL_HOSTNAME}:${MAPTOOL_PORT}`, openObserver: { next: this.handleWsOpen.bind(this) } });
+        try {
+            console.log(`Connecting to WebSocket on ws://${MAPTOOL_HOSTNAME}:${MAPTOOL_PORT} ...`);
+            this.ws = webSocket({ url: `ws://${MAPTOOL_HOSTNAME}:${MAPTOOL_PORT}?token=${token.token}`, openObserver: { next: this.handleWsOpen.bind(this) } });
 
-        this.ws.subscribe({
-            next: this.handleWsMessage.bind(this),
-            error: (err) => { },
-            complete: this.handleWsClose.bind(this)
-        });
+            this.ws.subscribe({
+                next: this.handleWsMessage.bind(this),
+                error: (err) => { console.error('WebSocket error:', err); setTimeout(this.connect.bind(this), 5000); },
+                complete: this.handleWsClose.bind(this)
+            });
+        } catch (error) {
+            console.error('Error connecting to WebSocket:', error);
+        }
+    }
+
+    public error(error) {
+        console.error('WebSocket error:', error);
     }
 
     public send() {
@@ -53,6 +64,7 @@ export class MapEntityRpcGateway {
     }
 
     private handleWsOpen() {
+        console.log('WebSocket connected');
         this.onOpen.next();
     }
 

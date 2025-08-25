@@ -5,6 +5,7 @@ import { Injectable } from "@nestjs/common/interfaces";
 import { iterate } from 'iterare';
 import { InstanceWrapper } from "@nestjs/core/injector/instance-wrapper";
 import { RPC_HANDLER_GATEWAY_METADATA, RPC_HANDLER_METADATA, RPC_METADATA } from "./constants";
+import { request } from "http";
 
 export class RpcModule {
     private container: NestContainer;
@@ -48,7 +49,7 @@ export class RpcModule {
                 return this.contextCreator.create(instance as object, instance[methodName], moduleName, methodName);
             });
 
-        gateway.onRequest.subscribe((event: { msgId: string, request: Request }) => {
+        gateway.onRequest.subscribe((event: { msgId: string, request: any }) => {
             for (const rpcMethod of rpcMethods) {
                 if (event.request[rpcMethod.name] !== undefined) {
                     rpcMethod.call(instance, event.request[rpcMethod.name]).then((value) => {

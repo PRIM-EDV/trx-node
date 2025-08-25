@@ -13,6 +13,10 @@ import { MapEntityRpcModule } from 'src/infrastructure/rpc/map-entity/map-entity
         MapEntityApiController,
         MapEntityApiService
     ],
+    exports: [
+        MapEntityApiController,
+        MapEntityApiService
+    ]
 })
 export class MapEntityApiModule {
     

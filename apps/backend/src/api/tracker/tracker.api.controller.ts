@@ -6,7 +6,7 @@ import { fromEntityType } from "src/infrastructure/mapper/entity.mapper.service"
 import { TrackerRpcGateway } from "src/infrastructure/rpc/tracker/tracker.rpc.gateway";
 
 @Injectable()
-export class TrackerApiService {
+export class TrackerApiController {
     constructor(
         private readonly gateway: TrackerRpcGateway,
         private readonly mapEntity: MapEntityService

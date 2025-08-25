@@ -18,6 +18,6 @@ export class MapEntityApiService {
 
     private async handleOnOpen() {
         const entities = await this.rpc.getAllMapEntities();
-        this.mapEntity.entities = entities;
+        entities.map(entity => this.mapEntity.setEntity(entity));
     }
 }
