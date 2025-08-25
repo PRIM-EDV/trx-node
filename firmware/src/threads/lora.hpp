@@ -32,7 +32,7 @@ bool encode_string(pb_ostream_t *stream, const pb_field_t *field, void *const *a
 }
 
 template <typename SpiMaster, typename Cs, typename D0, typename RxEn, typename TxEn>
-class LoraThread : public modm::pt::Protothread, protected modm::NestedResumable<4>
+class LoraThread : public modm::pt::Protothread, protected modm::NestedResumable<5>
 {
 public:
     void
@@ -72,6 +72,7 @@ public:
 
             if (timeout.isExpired())
             {
+                // Board::zero::ioStream << "Timeout expired" << '\0';
                 timeout.restart(10s);
                 // modem.read(sx127x::Address::FrLsb, &data[0], 1);
                 // modem.read(sx127x::Address::FrMid, &data[1], 1);
@@ -82,7 +83,7 @@ public:
             if (messageAvailable())
             {
                 PT_CALL(receiveMessage(data));
-                setTracker(data);
+                // setTracker(data);
             } 
         };
 
@@ -122,13 +123,13 @@ public:
     setMapEntity(Entity entity)
     {
         RF_BEGIN();
-
+        Board::zero::ioStream << "Setting map entity " << entity.id << " Position X:" << entity.position.x << " Position Y:" << entity.position.y << '\0';
         // data[0] = mapEntity.entity.squad.trackerId;
         // data[1] = (mapEntity.position.x >> 6) & 0x0F;
         // data[2] = (mapEntity.position.x << 2) | ((mapEntity.position.y >> 8) & 0x03);
         // data[3] = (mapEntity.position.y) & 0xFF;
 
-        RF_CALL(sendMessage(data));
+        // RF_CALL(sendMessage(data));
 
         RF_END_RETURN(0);
     };
@@ -156,14 +157,15 @@ private:
         return D0::read();
     }
 
-    void setTracker(uint8_t *data)
+    void setEntity(uint8_t *data)
     {
         // generate UUID
         uuid::v4(uuid_buffer); 
 
-        // // generate protobuf message
+        // generate protobuf message
+        Entity entity = Entity_init_default;
         // Tracker tracker = Tracker_init_default;
-        // tracker.id = data[0];
+        entity.id = data[0];
         // tracker.has_position = true;
         // tracker.position = Tracker_Position_init_default;
         // tracker.position.x = ((data[1] & 0x0f) << 6) | ((data[2] & 0xfc) >> 2);

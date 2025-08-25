@@ -6,7 +6,6 @@ import { TrackerRpcGateway } from './infrastructure/rpc/tracker/tracker.rpc.gate
 import { MapEntityRpcGateway } from './infrastructure/rpc/map-entity/map-entity.rpc.gateway';
 import { TrackerApiModule } from './api/tracker/tracker.api.module';
 import { MapEntityApiModule } from './api/map-entity/map-entity.api.module';
-import { TrackerRpcModule } from './infrastructure/rpc/tracker/tracker.rpc.module';
 
 (global as any).WebSocket = require('ws');
 

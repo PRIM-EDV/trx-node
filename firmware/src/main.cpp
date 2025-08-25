@@ -27,14 +27,14 @@ int main()
 {
     Board::initialize();
 
-    // lora1::thread.initialize();
+    lora1::thread.initialize();
     lora2::thread.initialize();
     control::thread.initialize();
 
     // fiber::Scheduler::run();
     while (true) {
-        // lora1::thread.run();
-        lora2::thread.run();
+        lora1::thread.run();
+        // lora2::thread.run();
         control::thread.run();
     }
 

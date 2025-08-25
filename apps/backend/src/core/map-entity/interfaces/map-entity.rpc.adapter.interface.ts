@@ -1,6 +1,6 @@
-import { Entity } from "@trx/protocol";
-
+import { MapEntity } from "@phobos-maptool/models";
 
 export interface IMapEntityRpcAdapter {
-    setEntity(entity: Entity): Promise<void>;
+    setEntity(entity: MapEntity): Promise<void>;
+    getAllMapEntities(): Promise<MapEntity[]>;
 }

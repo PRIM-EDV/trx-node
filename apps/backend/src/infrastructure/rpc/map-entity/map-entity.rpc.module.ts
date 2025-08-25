@@ -4,14 +4,12 @@ import { MapEntityRpcAdapter } from './map-entity.rpc.adapter';
 
 @Module({
     providers: [
-        MapEntityRpcGateway,
         {
             provide: 'MapEntityRpcAdapter',
             useClass: MapEntityRpcAdapter 
         }
     ],
     exports: [
-        MapEntityRpcGateway,
         {
             provide: 'MapEntityRpcAdapter',
             useClass: MapEntityRpcAdapter 

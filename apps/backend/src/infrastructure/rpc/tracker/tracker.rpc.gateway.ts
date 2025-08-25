@@ -26,33 +26,41 @@ export class TrackerRpcGateway {
     }
 
     public async connect() {
-        this.log.info("Connecting to serial...")
+        this.log.info(`Connecting to serial on ${SERIAL_PORT} ...`);
         this.serialport = new SerialPort({ path: SERIAL_PORT, baudRate: 9600 });
         this.parser = this.serialport.pipe(new DelimiterParser({ delimiter: '\0' }));
         this.parser.on('data', this.handleData);
         this.serialport.on('error', () => setTimeout(this.connect.bind(this), 5000));
+        this.serialport.on('open', () => this.log.info("Serial connected"));
     }
 
-    public async request(req: Request): Promise<any> {
+    public async request(req: Request): Promise<Response> {
         return new Promise((resolve, reject) => {
             const msg: TrxMessage = {
                 id: uuidv4(),
                 request: req
             }
-
+            const encoded = cobs.encode(TrxMessage.encode(msg).finish());
+            const framed = Buffer.concat([encoded, Buffer.from([0])]);
             // this.requests.set(msg.id, resolve.bind(this));
             // setTimeout(this.rejectOnTimeout.bind(this, msg.id, reject), 5000);
-            this.serialport.write(cobs.encode(TrxMessage.encode(msg)));
+            this.serialport.write(framed);
             resolve(null);
         });
     }
 
-    public respond(msgId: string, res: Response) {
-        const msg: TrxMessage = {
-            id: msgId,
-            response: res
-        }
-        this.serialport.write(cobs.encode(TrxMessage.encode(msg)));
+    public async respond(msgId: string, res: Response) {
+        return new Promise<void>((resolve, reject) => {
+            const msg: TrxMessage = {
+                id: msgId,
+                response: res
+            }
+            const encoded = cobs.encode(TrxMessage.encode(msg).finish());
+            const framed = Buffer.concat([encoded, Buffer.from([0])]);
+
+            this.serialport.write(framed);
+            resolve();
+        });
     }
 
     private handleData(data: Buffer) {
