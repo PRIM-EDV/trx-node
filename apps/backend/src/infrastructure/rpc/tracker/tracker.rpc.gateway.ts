@@ -29,7 +29,7 @@ export class TrackerRpcGateway {
         this.log.info(`Connecting to serial on ${SERIAL_PORT} ...`);
         this.serialport = new SerialPort({ path: SERIAL_PORT, baudRate: 9600 });
         this.parser = this.serialport.pipe(new DelimiterParser({ delimiter: '\0' }));
-        this.parser.on('data', this.handleData);
+        this.parser.on('data', this.handleData.bind(this));
         this.serialport.on('error', () => setTimeout(this.connect.bind(this), 5000));
         this.serialport.on('open', () => this.log.info("Serial connected"));
     }
@@ -81,7 +81,7 @@ export class TrackerRpcGateway {
     
             this.onMessage.next(msg);
         } catch (err) {
-            this.log.error(err);
+            console.error(err);
         }
     }
 

@@ -53,6 +53,7 @@ export class MapEntityService {
     }
 
     public setEntity(entity: MapEntity): void {
+        console.log("Setting entity" + JSON.stringify(entity));
         const existing = this.entities.find(e => e.id === entity.id);
         if (existing) {
             Object.assign(existing, entity);
@@ -74,7 +75,11 @@ export class MapEntityService {
     }
 
     public updatePosition(id: number, position: { x: number, y: number }, type: MapEntityType): void {
-
+        const entity = this.entities.find(e => (e.type == MapEntityType.FRIEND && e.entity.trackerId === id));
+        if (entity) {
+            entity.position = position;
+            this.mapEntityRpcAdapter.setEntity(entity);
+        }
     }
 
     public remove(entity: MapEntity): void {
