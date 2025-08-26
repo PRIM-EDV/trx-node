@@ -16,6 +16,7 @@
 #include "driver/cdebyte/e32-x00mx0s.hpp"
 #include "lib/cobs/cobs.hpp"
 #include "lib/uuid/uuid.h"
+#include "lib/thread/thread.hpp"
 
 #include "protocol/trx.pb.hpp"
 
@@ -32,7 +33,7 @@ bool encode_string(pb_ostream_t *stream, const pb_field_t *field, void *const *a
 }
 
 template <typename SpiMaster, typename Cs, typename D0, typename RxEn, typename TxEn>
-class LoraThread : public modm::pt::Protothread, protected modm::NestedResumable<5>
+class LoraThread : public Thread, protected modm::NestedResumable<5>
 {
 public:
     void
@@ -47,6 +48,7 @@ public:
         RF_CALL_BLOCKING(modem.setExplicitHeaderMode());
         RF_CALL_BLOCKING(modem.setSpreadingFactor(sx127x::SpreadingFactor::SF12));
         RF_CALL_BLOCKING(modem.setBandwidth(sx127x::SignalBandwidth::Fr250kHz));
+        // RF_CALL_BLOCKING(modem.setBandwidth(sx127x::SignalBandwidth::Fr125kHz));
         // RF_CALL_BLOCKING(modem.setCodingRate(sx127x::ErrorCodingRate::Cr4_5));
         RF_CALL_BLOCKING(modem.enablePayloadCRC());
         RF_CALL_BLOCKING(modem.setPayloadLength(4));
@@ -56,7 +58,7 @@ public:
         RF_CALL_BLOCKING(modem.setOutputPower(0x0f));
         RF_CALL_BLOCKING(modem.setOperationMode(sx127x::Mode::RecvCont));
 
-        timeout.restart(10s);
+        timeout.restart(5s);
     };
 
     bool
@@ -70,20 +72,10 @@ public:
         {
             PT_WAIT_UNTIL(messageAvailable() || timeout.isExpired());
 
-            if (timeout.isExpired())
-            {
-                // Board::zero::ioStream << "Timeout expired" << '\0';
-                timeout.restart(10s);
-                // modem.read(sx127x::Address::FrLsb, &data[0], 1);
-                // modem.read(sx127x::Address::FrMid, &data[1], 1);
-                // modem.read(sx127x::Address::FrMsb, &data[2], 1);
-                // Board::zero::ioStream << ":" << data[0] << ":" << data[1] << ":" << data[2] << "\n";
-            }   
-
             if (messageAvailable())
             {
-                PT_CALL(receiveMessage(data));
-                // setTracker(data);
+                RF_CALL(receiveMessage(data));
+                setEntity(data);
             } 
         };
 
@@ -99,6 +91,7 @@ public:
         if (!(status[0] & (uint8_t)sx127x::RegIrqFlags::PayloadCrcError))
         {
             RF_CALL(modem.getPayload(buffer, 4));
+
         }
         RF_CALL(modem.write(sx127x::Address::IrqFlags, 0xff));
 
@@ -109,8 +102,6 @@ public:
     sendMessage(uint8_t *data)
     {
         RF_BEGIN();
-
-        RF_CALL(modem.setPayloadLength(4));
         RF_CALL(modem.sendPacket(data, 4));
         RF_WAIT_UNTIL(messageSent());
         RF_CALL(modem.write(sx127x::Address::IrqFlags, 0xff));
@@ -123,26 +114,24 @@ public:
     setMapEntity(Entity entity)
     {
         RF_BEGIN();
-        Board::zero::ioStream << "Setting map entity " << entity.id << " Position X:" << entity.position.x << " Position Y:" << entity.position.y << '\0';
-        // data[0] = mapEntity.entity.squad.trackerId;
-        // data[1] = (mapEntity.position.x >> 6) & 0x0F;
-        // data[2] = (mapEntity.position.x << 2) | ((mapEntity.position.y >> 8) & 0x03);
-        // data[3] = (mapEntity.position.y) & 0xFF;
+        data[0] = entity.id;
+        data[1] = (entity.position.x >> 6) & 0x0F;
+        data[2] = (entity.position.x << 2) | ((entity.position.y >> 8) & 0x03);
+        data[3] = (entity.position.y) & 0xFF;
 
-        // RF_CALL(sendMessage(data));
+        RF_CALL(sendMessage(data));
 
         RF_END_RETURN(0);
     };
 
 private:
-    char uuid_buffer[37];
+    char uuid_buffer[38];
     uint8_t data[8];
     uint8_t status[1];
     uint8_t message_buffer[128];
     uint8_t encoding_buffer[128];
 
-
-    ShortTimeout timeout;
+    Timeout timeout;
     E32x00Mx0s<SpiMaster, Cs, RxEn, TxEn> modem;
 
     bool
@@ -164,32 +153,32 @@ private:
 
         // generate protobuf message
         Entity entity = Entity_init_default;
-        // Tracker tracker = Tracker_init_default;
         entity.id = data[0];
-        // tracker.has_position = true;
-        // tracker.position = Tracker_Position_init_default;
-        // tracker.position.x = ((data[1] & 0x0f) << 6) | ((data[2] & 0xfc) >> 2);
-        // tracker.position.y = ((data[2] & 0x03) << 8) | data[3];
+        entity.has_position = true;
+        entity.position = Position_init_default;
+        entity.position.x = ((data[1] & 0x0f) << 6) | ((data[2] & 0xfc) >> 2);
+        entity.position.y = ((data[2] & 0x03) << 8) | data[3];
+        entity.type = Type_SQUAD;
 
-        // TrxMessage trx_message = TrxMessage_init_zero;
-        // trx_message.id.arg = uuid_buffer;
-        // trx_message.id.funcs.encode = &encode_string;
+        TrxMessage trx_message = TrxMessage_init_zero;
+        trx_message.id.arg = uuid_buffer;
+        trx_message.id.funcs.encode = &encode_string;
 
-        // trx_message.which_message = TrxMessage_request_tag;
-        // trx_message.message.request.which_request = Request_setTracker_tag;
-        // trx_message.message.request.request.setTracker = SetTracker_Request_init_default;
-        // trx_message.message.request.request.setTracker.has_tracker = true;
-        // trx_message.message.request.request.setTracker.tracker = tracker;
+        trx_message.which_message = TrxMessage_request_tag;
+        trx_message.message.request.which_request = Request_setEntity_tag;
+        trx_message.message.request.request.setEntity = SetEntity_Request_init_default;
+        trx_message.message.request.request.setEntity.has_entity = true;
+        trx_message.message.request.request.setEntity.entity = entity;
 
-        // pb_ostream_t pb_ostream = pb_ostream_from_buffer(message_buffer, sizeof(message_buffer));
-        // pb_encode(&pb_ostream, TrxMessage_fields, &trx_message);
-        // uint8_t bytes_encoded = cobs_encode(message_buffer, pb_ostream.bytes_written, encoding_buffer);
+        pb_ostream_t pb_ostream = pb_ostream_from_buffer(message_buffer, sizeof(message_buffer));
+        pb_encode(&pb_ostream, TrxMessage_fields, &trx_message);
+        uint8_t bytes_encoded = cobs_encode(message_buffer, pb_ostream.bytes_written, encoding_buffer);
 
-        // Board::zero::Uart::write(encoding_buffer, bytes_encoded);
-        // Board::zero::Uart::write('\0');
+        Board::zero::Uart::write(encoding_buffer, bytes_encoded);
+        Board::zero::Uart::write('\0');
+        // Board::zero::ioStream << data[0] << ":" << data[1] << ":" << data[2] << "\n";
+        // Board::zero::ioStream << "Stack usage:" << stack_usage() << '\n';
     }
-
-    
 };
 
 #endif

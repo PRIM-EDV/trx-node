@@ -8,34 +8,29 @@
 
 
 using namespace Board;
-
-
-namespace Board::lora1 {
-    LoraThread<lora::Spi, Nss, D0, RxEn, TxEn> thread;
-}
+// namespace Board::lora1 {
+//     LoraThread<lora::Spi, Nss, D0, RxEn, TxEn> thread;
+// }
 
 namespace Board::lora2 {
     LoraThread<lora::Spi, Nss, D0, RxEn, TxEn> thread;
 }
 
 namespace Board::control {
-    ControlThread<zero::Uart, decltype(lora1::thread), decltype(lora2::thread)> thread(lora1::thread, lora2::thread);
+    ControlThread<zero::Uart, decltype(lora2::thread)> thread(lora2::thread);
+    // ControlThread<zero::Uart> thread;
 }
 
 
 int main()
 {
     Board::initialize();
+    // lora2::thread.stack_watermark();
+    control::thread.stack_watermark();
 
-    lora1::thread.initialize();
+    // lora1::thread.initialize();
     lora2::thread.initialize();
     control::thread.initialize();
 
-    // fiber::Scheduler::run();
-    while (true) {
-        lora1::thread.run();
-        // lora2::thread.run();
-        control::thread.run();
-    }
-
+    fiber::Scheduler::run();
 }

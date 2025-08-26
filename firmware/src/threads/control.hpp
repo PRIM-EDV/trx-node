@@ -14,15 +14,16 @@
 
 #include "lib/buffer/message_buffer.hpp"
 #include "protocol/trx.pb.hpp"  
+#include "lib/thread/thread.hpp"
 
 
 using namespace modm;
 
-template <typename Uart, typename Modem1, typename Modem2>
-class ControlThread : public modm::pt::Protothread, protected modm::NestedResumable<5>
+template <typename Uart, typename Modem1>
+class ControlThread : public Thread, protected modm::NestedResumable<5>
 {
 public:
-    ControlThread(Modem1 &modem1, Modem2 &modem2) : modem1(modem1), modem2(modem2) {};
+    ControlThread(Modem1 &modem1) : modem1(modem1) {};
 
     void
     initialize() {};
@@ -90,6 +91,8 @@ public:
             }
         }
 
+        // Board::zero::ioStream << "Watermark: " << stack_usage() << '\n';
+
         RF_END();
     };
 
@@ -111,7 +114,7 @@ public:
 private:
     MessageBuffer<128> message;
     Modem1 &modem1;
-    Modem2 &modem2;
+    // Modem2 &modem2;
 
     uint8_t decoded_buffer[128];
 
