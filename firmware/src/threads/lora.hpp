@@ -47,11 +47,11 @@ public:
         RF_CALL_BLOCKING(modem.setAgcAutoOn());
         RF_CALL_BLOCKING(modem.setExplicitHeaderMode());
         RF_CALL_BLOCKING(modem.setSpreadingFactor(sx127x::SpreadingFactor::SF12));
-        RF_CALL_BLOCKING(modem.setBandwidth(sx127x::SignalBandwidth::Fr250kHz));
+        RF_CALL_BLOCKING(modem.setBandwidth(sx127x::SignalBandwidth::Fr125kHz));
         // RF_CALL_BLOCKING(modem.setBandwidth(sx127x::SignalBandwidth::Fr125kHz));
         // RF_CALL_BLOCKING(modem.setCodingRate(sx127x::ErrorCodingRate::Cr4_5));
         RF_CALL_BLOCKING(modem.enablePayloadCRC());
-        RF_CALL_BLOCKING(modem.setPayloadLength(4));
+        RF_CALL_BLOCKING(modem.setPayloadLength(5));
         RF_CALL_BLOCKING(modem.setDio0Mapping(0));
 
         // // Set output power to 10 dBm (boost mode)
@@ -90,8 +90,7 @@ public:
         RF_CALL(modem.read(sx127x::Address::IrqFlags, status, 1));
         if (!(status[0] & (uint8_t)sx127x::RegIrqFlags::PayloadCrcError))
         {
-            RF_CALL(modem.getPayload(buffer, 4));
-
+            RF_CALL(modem.getPayload(buffer, 5));
         }
         RF_CALL(modem.write(sx127x::Address::IrqFlags, 0xff));
 
@@ -102,7 +101,7 @@ public:
     sendMessage(uint8_t *data)
     {
         RF_BEGIN();
-        RF_CALL(modem.sendPacket(data, 4));
+        RF_CALL(modem.sendPacket(data, 5));
         RF_WAIT_UNTIL(messageSent());
         RF_CALL(modem.write(sx127x::Address::IrqFlags, 0xff));
         RF_CALL(modem.setOperationMode(sx127x::Mode::RecvCont));
@@ -114,10 +113,13 @@ public:
     setMapEntity(Entity entity)
     {
         RF_BEGIN();
-        data[0] = entity.id;
-        data[1] = (entity.position.x >> 6) & 0x0F;
-        data[2] = (entity.position.x << 2) | ((entity.position.y >> 8) & 0x03);
-        data[3] = (entity.position.y) & 0xFF;
+
+        data[0] = ((entity.type & 0x03) << 6) | (entity.id & 0x3F);
+        data[1] = ((entity.size & 0x07) << 5) | 0x00;
+        data[2] = ((entity.position.x & 0x04)) & 0xff;
+        data[3] = (entity.position.x & 0x0F << 4) | ((entity.position.y >> 8) & 0xFF);
+        data[4] = entity.position.y & 0xff;
+
 
         RF_CALL(sendMessage(data));
 
@@ -153,12 +155,13 @@ private:
 
         // generate protobuf message
         Entity entity = Entity_init_default;
-        entity.id = data[0];
+        entity.id = data[0] & 0x3F;
         entity.has_position = true;
         entity.position = Position_init_default;
-        entity.position.x = ((data[1] & 0x0f) << 6) | ((data[2] & 0xfc) >> 2);
-        entity.position.y = ((data[2] & 0x03) << 8) | data[3];
-        entity.type = Type_SQUAD;
+        entity.position.x = ((uint16_t)data[2] << 4) | ((data[3] >> 4) & 0x0F);
+        entity.position.y = ((uint16_t)(data[3] & 0x0F) << 8) |  data[4];
+        entity.type = parseType((data[0] >> 6) & 0x03);
+        entity.size = (data[1] >> 5) & 0x07;
 
         TrxMessage trx_message = TrxMessage_init_zero;
         trx_message.id.arg = uuid_buffer;
@@ -178,6 +181,24 @@ private:
         Board::zero::Uart::write('\0');
         // Board::zero::ioStream << data[0] << ":" << data[1] << ":" << data[2] << "\n";
         // Board::zero::ioStream << "Stack usage:" << stack_usage() << '\n';
+    }
+
+    Type
+    parseType(uint8_t byte)
+    {
+        switch (byte)
+        {
+            case 0x00:
+                return Type_UNKNOWN;
+            case 0x01:
+                return Type_SQUAD;
+            case 0x02:
+                return Type_ENEMY;
+            case 0x03:
+                return Type_OBJECTIVE;
+            default:
+                return Type_UNKNOWN;
+        }
     }
 };
 
