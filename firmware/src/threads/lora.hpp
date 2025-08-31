@@ -47,7 +47,7 @@ public:
         RF_CALL_BLOCKING(modem.setAgcAutoOn());
         RF_CALL_BLOCKING(modem.setExplicitHeaderMode());
         RF_CALL_BLOCKING(modem.setSpreadingFactor(sx127x::SpreadingFactor::SF12));
-        RF_CALL_BLOCKING(modem.setBandwidth(sx127x::SignalBandwidth::Fr125kHz));
+        RF_CALL_BLOCKING(modem.setBandwidth(sx127x::SignalBandwidth::Fr250kHz));
         // RF_CALL_BLOCKING(modem.setBandwidth(sx127x::SignalBandwidth::Fr125kHz));
         // RF_CALL_BLOCKING(modem.setCodingRate(sx127x::ErrorCodingRate::Cr4_5));
         RF_CALL_BLOCKING(modem.enablePayloadCRC());
@@ -77,6 +77,9 @@ public:
                 RF_CALL(receiveMessage(data));
                 setEntity(data);
             } 
+
+            // Board::zero::ioStream << "Stack usage:" << stack_usage() << '\n';
+            timeout.restart(5s);
         };
 
         PT_END();
@@ -102,7 +105,8 @@ public:
     {
         RF_BEGIN();
         RF_CALL(modem.sendPacket(data, 5));
-        RF_WAIT_UNTIL(messageSent());
+        timeout2.restart(2s);
+        RF_WAIT_UNTIL(messageSent() || timeout2.isExpired());
         RF_CALL(modem.write(sx127x::Address::IrqFlags, 0xff));
         RF_CALL(modem.setOperationMode(sx127x::Mode::RecvCont));
 
@@ -116,12 +120,12 @@ public:
 
         data[0] = ((entity.type & 0x03) << 6) | (entity.id & 0x3F);
         data[1] = ((entity.size & 0x07) << 5) | 0x00;
-        data[2] = ((entity.position.x & 0x04)) & 0xff;
-        data[3] = (entity.position.x & 0x0F << 4) | ((entity.position.y >> 8) & 0xFF);
+        data[2] = ((entity.position.x >> 4)) & 0xff;
+        data[3] = ((entity.position.x & 0x0F) << 4) | ((entity.position.y >> 8) & 0x0F);
         data[4] = entity.position.y & 0xff;
+        // Board::zero::ioStream << "Sending entity: " << entity.id << '\n';
 
-
-        RF_CALL(sendMessage(data));
+        RF_CALL_BLOCKING(sendMessage(data));
 
         RF_END_RETURN(0);
     };
@@ -134,6 +138,7 @@ private:
     uint8_t encoding_buffer[128];
 
     Timeout timeout;
+    Timeout timeout2;
     E32x00Mx0s<SpiMaster, Cs, RxEn, TxEn> modem;
 
     bool

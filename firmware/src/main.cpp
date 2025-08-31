@@ -25,7 +25,7 @@ namespace Board::control {
 int main()
 {
     Board::initialize();
-    // lora2::thread.stack_watermark();
+    lora2::thread.stack_watermark();
     control::thread.stack_watermark();
 
     // lora1::thread.initialize();

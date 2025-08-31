@@ -16,7 +16,7 @@
 
 
 /// @ingroup modm_processing_protothread
-class Thread : public modm::Fiber< 2024 >
+class Thread : public modm::Fiber< 2048 >
 {
 public:
 	Thread(modm::fiber::Start start=modm::fiber::Start::Now)
