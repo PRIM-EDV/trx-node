@@ -74,8 +74,12 @@ public:
 
             if (messageAvailable())
             {
-                RF_CALL(receiveMessage(data));
-                setEntity(data);
+                if (RF_CALL(receiveMessage(data)))
+                {
+                    setEntity(data);
+                } else {
+                    
+                }
             } 
 
             // Board::zero::ioStream << "Stack usage:" << stack_usage() << '\n';
@@ -85,7 +89,7 @@ public:
         PT_END();
     };
 
-    ResumableResult<void>
+    ResumableResult<bool>
     receiveMessage(uint8_t *buffer)
     {
         RF_BEGIN();
@@ -96,8 +100,7 @@ public:
             RF_CALL(modem.getPayload(buffer, 5));
         }
         RF_CALL(modem.write(sx127x::Address::IrqFlags, 0xff));
-
-        RF_END();
+        RF_END_RETURN(!(status[0] & (uint8_t)sx127x::RegIrqFlags::PayloadCrcError));
     };
 
     ResumableResult<uint8_t>
