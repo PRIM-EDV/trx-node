@@ -16,3 +16,6 @@
 [submodule "libs/phobos-maptool/protocol"]
 	path = libs/phobos-maptool/protocol
 	url = https://github.com/PRIM-EDV/phobos-maptool-protocol
+[submodule "ext/meshtastic/protobufs"]
+	path = ext/meshtastic/protobufs
+	url = https://github.com/meshtastic/protobufs
