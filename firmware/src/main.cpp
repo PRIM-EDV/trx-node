@@ -5,6 +5,7 @@
 
 #include "src/threads/lora.hpp"
 #include "src/threads/control.hpp"
+#include "src/threads/message/message_module.hpp"
 
 
 using namespace Board;
@@ -21,16 +22,22 @@ namespace Board::control {
     // ControlThread<zero::Uart> thread;
 }
 
+namespace Board::message {
+    MessageModule<zero::Uart> module;
+}
+
 
 int main()
 {
     Board::initialize();
     lora2::thread.stack_watermark();
     control::thread.stack_watermark();
+    message::module.worker().stack_watermark();
 
     // lora1::thread.initialize();
     lora2::thread.initialize();
     control::thread.initialize();
+    message::module.initialize();
 
     fiber::Scheduler::run();
 }

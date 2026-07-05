@@ -13,8 +13,6 @@
 
 #include <modm/processing/fiber.hpp>
 
-
-
 /// @ingroup modm_processing_protothread
 class Thread : public modm::Fiber< 2048 >
 {

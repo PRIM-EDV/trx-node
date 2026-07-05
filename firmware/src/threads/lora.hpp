@@ -15,8 +15,8 @@
 #include "board/board.hpp"
 #include "driver/cdebyte/e32-x00mx0s.hpp"
 #include "lib/cobs/cobs.hpp"
-#include "lib/uuid/uuid.h"
 #include "lib/thread/thread.hpp"
+#include "lib/uuid/uuid.h"
 
 #include "protocol/trx.pb.hpp"
 
@@ -187,6 +187,7 @@ private:
 
         Board::zero::Uart::write(encoding_buffer, bytes_encoded);
         Board::zero::Uart::write('\0');
+
         // Board::zero::ioStream << data[0] << ":" << data[1] << ":" << data[2] << "\n";
         // Board::zero::ioStream << "Stack usage:" << stack_usage() << '\n';
     }
