@@ -38,7 +38,7 @@ public:
         while (1)
         {
             PT_WAIT_UNTIL(Uart::read(c) || Uart::hasError());
-
+            
             if (Uart::hasError())
             {
                 Uart::clearError();

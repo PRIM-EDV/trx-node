@@ -14,13 +14,13 @@
 #include <modm/processing/fiber.hpp>
 
 
-
 /// @ingroup modm_processing_protothread
-class Thread : public modm::Fiber< 2048 >
+template< std::size_t StackSize = 2048 >
+class Thread : public modm::Fiber< StackSize >
 {
 public:
 	Thread(modm::fiber::Start start=modm::fiber::Start::Now)
-	:	Fiber([this](modm::fiber::stop_token stoken)
+	:	modm::Fiber<StackSize>([this](modm::fiber::stop_token stoken)
 			  { while(not stoken.stop_requested() and update()) modm::this_fiber::yield(); }, start)
 	{}
 
