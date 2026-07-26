@@ -25,5 +25,6 @@
     <module>modm:build:scons</module>
     <module>modm:io</module>
     <module>modm:nanopb</module>
+    <module>modm:ide:vscode</module>
   </modules>
 </library>

@@ -11,10 +11,7 @@
 #include <modm/processing/protothread.hpp>
 #include <modm/processing/timer.hpp>
 
-#include "board/board.hpp"
 #include "driver/cdebyte/e32-x00mx0s.hpp"
-#include "lib/cobs/cobs.hpp"
-#include "lib/uuid/uuid.h"
 #include "lib/thread/thread.hpp"
 
 #include "lora_message.hpp"

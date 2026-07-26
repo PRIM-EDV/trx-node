@@ -9,8 +9,6 @@
 
 #include <modm/processing.hpp>
 #include <modm/processing/protothread.hpp>
-
-#include "lib/buffer/message_buffer.hpp"
 #include "lib/thread/thread.hpp"
 
 
@@ -31,7 +29,7 @@ public:
     {
         while (true) 
         {
-            abc
+            
         }
     }
 

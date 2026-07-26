@@ -11,12 +11,7 @@
 #include <modm/processing/protothread.hpp>
 #include <modm/processing/timer.hpp>
 
-#include "board/board.hpp"
-#include "driver/cdebyte/e32-x00mx0s.hpp"
-#include "lib/cobs/cobs.hpp"
-#include "lib/uuid/uuid.h"
 #include "lib/lora/lora_thread.hpp"
-#include "lib/thread/thread.hpp"
 
 using namespace modm;
 
@@ -45,6 +40,7 @@ public:
         // // Set output power to 10 dBm (boost mode)
         RF_CALL_BLOCKING(this->modem.setOutputPower(0x0f));
         RF_CALL_BLOCKING(this->modem.setOperationMode(sx127x::Mode::RecvCont));
+
     };
 
 protected:
@@ -68,7 +64,6 @@ protected:
         // RF_WAIT_UNTIL(messageSent() || timeout.isExpired());
         this->modem.write(sx127x::Address::IrqFlags, 0xff);
         this->modem.setOperationMode(sx127x::Mode::RecvCont);
-
         return true;
     }
 private:
