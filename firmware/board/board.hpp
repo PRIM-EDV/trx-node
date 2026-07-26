@@ -21,8 +21,8 @@ using namespace modm::literals;
 struct SystemClock
 {
 	// core and bus frequencys
-	static constexpr uint32_t Frequency = 48_MHz;
-    static constexpr uint32_t Hsi = 8_MHz;
+	static constexpr uint32_t Hsi48 = 48_MHz;
+	static constexpr uint32_t Frequency = Hsi48;
 	static constexpr uint32_t Ahb = Frequency;
 	static constexpr uint32_t Apb = Frequency;
 
@@ -38,26 +38,19 @@ struct SystemClock
     static constexpr uint32_t Usb = Ahb;
 
 	static bool inline
-	enable()
-	{
-		Rcc::enableInternalClock(); // 8 MHz
-        const Rcc::PllFactors pllFactors{
-			.pllMul = 12,
-			.pllPrediv = 2,
-            .usbPrediv = Rcc::UsbPrescaler::Div1
-		};
-        Rcc::enablePll(Rcc::PllSource::InternalClock, pllFactors);
-		// set flash latency for 48MHz
-		Rcc::setFlashLatency<Frequency>();
-		// switch system clock to PLL output
-		Rcc::enableSystemClock(Rcc::SystemClockSource::Pll);
-		Rcc::setAhbPrescaler(Rcc::AhbPrescaler::Div1);
-		Rcc::setApbPrescaler(Rcc::ApbPrescaler::Div1);
-		// update frequencies for busy-wait delay functions
-        Rcc::updateCoreFrequency<Frequency>();
+    enable()
+    {
+        Rcc::enableLseCrystal();
+		Rcc::enableHsi48Clock();
 
-		return true;
-	}
+		Rcc::setFlashLatency<Frequency>();
+		Rcc::updateCoreFrequency<Frequency>();
+
+		Rcc::enableSystemClock(Rcc::SystemClockSource::Hsi48);
+		Rcc::setRealTimeClockSource(Rcc::RealTimeClockSource::Lse);
+
+        return true;
+    }
 };
 
 namespace lora {
@@ -80,6 +73,15 @@ namespace lora2 {
 	using D0 = GpioInputB13;
 	using TxEn = GpioOutputB14;
 	using RxEn = GpioOutputB15;
+
+	struct Hw
+    {
+        using SpiMaster = lora::Spi;
+        using Cs        = Nss;
+        using RxEn      = RxEn;
+        using TxEn      = TxEn;
+        using D0        = D0;
+    };
 }
 
 namespace zero
