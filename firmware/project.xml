@@ -9,6 +9,7 @@
     <option name="modm:processing:protothread:use_fiber">Yes</option>
     <option name="modm:nanopb:sources">../libs/trx-protocol/proto/trx.proto,../libs/trx-protocol/proto/trx.device.proto,../libs/trx-protocol/proto/trx.tracker.proto</option>
     <option name="modm:nanopb:path">protocol</option>
+    <option name="modm:build:scons:include_sconstruct">False</option>
   </options>
   <modules>
     <module>modm:architecture:register</module>
