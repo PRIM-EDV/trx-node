@@ -18,33 +18,6 @@ export class MapEntityService {
     private foeIdMap: Map<string, number> = new Map();
     private friendIdMap: Map<string, number> = new Map();
 
-    private updateTracker = () => {
-        let index = 0;
-
-        return () => {
-            if (this.entities.length === 0) return;
-
-            index = (index + 1) % this.entities.length;
-            const entity = this.entities[index];
-
-            let id: number;
-            switch (entity.type) {
-                case MapEntityType.FOE:
-                    id = this.foeIdMap.get(entity.id)!;
-                    break;
-                case MapEntityType.FRIEND:
-                    id = entity.entity.trackerId > 0? entity.entity.trackerId : this.friendIdMap.get(entity.id)!;
-                    break;
-                case MapEntityType.OBJECT:
-                    id = this.objectIdMap.get(entity.id)!;
-                    break;
-                default:
-                    return;
-            }
-            this.trackerRpcAdapter.setEntity(toEntity(entity, id));
-        };
-    };
-
     constructor(
         @MapEntityRpcAdapter() private readonly mapEntityRpcAdapter: IMapEntityRpcAdapter,
         @TrackerRpcAdapter() private readonly trackerRpcAdapter: ITrackerRpcAdapter
@@ -108,4 +81,31 @@ export class MapEntityService {
         }
         return -1;
     }
+
+    private updateTracker = () => {
+        let index = 0;
+
+        return () => {
+            if (this.entities.length === 0) return;
+
+            index = (index + 1) % this.entities.length;
+            const entity = this.entities[index];
+
+            let id: number;
+            switch (entity.type) {
+                case MapEntityType.FOE:
+                    id = this.foeIdMap.get(entity.id)!;
+                    break;
+                case MapEntityType.FRIEND:
+                    id = entity.entity.trackerId > 0? entity.entity.trackerId : this.friendIdMap.get(entity.id)!;
+                    break;
+                case MapEntityType.OBJECT:
+                    id = this.objectIdMap.get(entity.id)!;
+                    break;
+                default:
+                    return;
+            }
+            this.trackerRpcAdapter.setEntity(toEntity(entity, id));
+        };
+    };
 }
