@@ -3,34 +3,33 @@
  * All Rights Reserved.
  */
 // ----------------------------------------------------------------------------
-#ifndef MESSAGE_BUFFER_HPP
-#define MESSAGE_BUFFER_HPP
+#ifndef SIMPLE_BUFFER_HPP
+#define SIMPLE_BUFFER_HPP
 
-#include <cstddef>
 #include <cstring>
 
 template<uint8_t N>
-class MessageBuffer
+class SimpleBuffer
 {
 public:
     char data[N + 1];
     uint8_t size;
 
-    MessageBuffer();
+    SimpleBuffer();
 
     void
     clear();
 
-    MessageBuffer& 
+    SimpleBuffer& 
     operator+=(const char c);
 
-    MessageBuffer& 
+    SimpleBuffer& 
     operator+=(const char* str);
 
     uint8_t
     maxSize();
 };
 
-#include "message_buffer_impl.hpp"
+#include "simple_buffer_impl.hpp"
 
 #endif

@@ -1,24 +1,24 @@
-#include "message_buffer.hpp"
+#include "simple_buffer.hpp"
 /* Copyright (c) 2023, Lucas Mösch
  * All Rights Reserved.
  */
 // ----------------------------------------------------------------------------
 
 template <uint8_t N>
-MessageBuffer<N>::MessageBuffer()
+SimpleBuffer<N>::SimpleBuffer()
 {
 }
 
 template <uint8_t N>
-inline void MessageBuffer<N>::clear()
+inline void SimpleBuffer<N>::clear()
 {
     memset(data, 0, N);
     size = 0;
 }
 
 template <uint8_t N>
-inline MessageBuffer<N>&
-MessageBuffer<N>::operator+=(const char c)
+inline SimpleBuffer<N>&
+SimpleBuffer<N>::operator+=(const char c)
 {
     if(size < N) {
         data[size] = c;
@@ -29,8 +29,8 @@ MessageBuffer<N>::operator+=(const char c)
 }
 
 template <uint8_t N>
-MessageBuffer<N>&
-MessageBuffer<N>::operator+=(const char *str)
+SimpleBuffer<N>&
+SimpleBuffer<N>::operator+=(const char *str)
 {
     std::size_t len = std::min(std::strlen(str), (size_t) (N - size));
     std::strncpy(data[size], str, len);
@@ -42,7 +42,7 @@ MessageBuffer<N>::operator+=(const char *str)
 
 template <uint8_t N>
 uint8_t
-MessageBuffer<N>::maxSize()
+SimpleBuffer<N>::maxSize()
 {
     return N;
 }
