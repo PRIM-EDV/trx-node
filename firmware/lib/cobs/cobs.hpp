@@ -6,6 +6,8 @@
 #ifndef COBS_HPP
 #define COBS_HPP
 
+#include <stdint.h>
+
 inline uint8_t cobs_encode(uint8_t *data, uint8_t nbBytes, uint8_t *buffer)
 {
     uint8_t *codep = buffer; // Output code pointer
@@ -54,6 +56,47 @@ uint8_t cobs_decode(uint8_t *data, uint8_t nbBytes, uint8_t *buffer)
         }
     }
     
+    return codep - buffer;
+}
+
+inline uint8_t cobs_encode_inplace(uint8_t *buffer, uint8_t nbBytes)
+{
+    uint8_t dist = 1;
+
+    for (uint8_t i = nbBytes; i-- > 0;)
+    {
+        uint8_t byte = buffer[i];
+        buffer[i + 1] = byte ? byte : dist;
+        dist = byte ? dist + 1 : 1;
+    }
+    buffer[0] = dist;
+
+    return nbBytes + 1;
+}
+
+
+inline uint8_t cobs_decode_inplace(uint8_t *buffer, uint8_t nbBytes)
+{
+    uint8_t *codep = buffer;
+    uint8_t *data = buffer;
+
+    for (uint8_t code = 0xff, block = 0; codep < buffer + nbBytes; --block)
+    {
+        if (block) {
+            *codep++ = *data++;
+        } else {
+            block = *data++;
+
+            if(block && (code != 0xff)) {
+                *codep++ = 0;
+            }
+            code = block;
+            if (!code) {
+                break;
+            }
+        }
+    }
+
     return codep - buffer;
 }
 
