@@ -15,6 +15,7 @@
 #include "driver/cdebyte/e32-x00mx0s.hpp"
 #include "lib/thread/thread.hpp"
 
+#include "meshtastic_gateway_ipc.hpp"
 #include "src/host/host_rpc_adapter.hpp"
 
 using namespace modm;
@@ -48,15 +49,43 @@ public:
     {
         while (1)
         {
-            PT_WAIT_UNTIL(packetAvailable());
+            PT_WAIT_UNTIL(packetAvailable() || MeshtasticGatewayIpc::commandQueue.isNotEmpty());
 
             if (packetAvailable())
             {
                 handlePacket();
             }
 
+            if (MeshtasticGatewayIpc::commandQueue.isNotEmpty())
+            {
+                handleIpc();
+            };
+
         };
     };
+
+    void
+    handleIpc()
+    {
+        MeshtasticGatewayIpc::Command cmd = MeshtasticGatewayIpc::commandQueue.get();
+        switch (cmd.kind)
+        {
+            case MeshtasticGatewayIpc::Cmd::SetModemConfig:
+                setModemConfig(cmd.setModemConfig);
+                break;
+        }
+
+        MeshtasticGatewayIpc::commandQueue.pop();
+    }
+
+    void
+    setModemConfig(MeshtasticGatewayIpc::SetModemConfigArgs &config)
+    {
+        modem.setBandwidth(config.bandwidth);
+        modem.setCarrierFreq((frequency_t)config.frequency);
+        modem.setSpreadingFactor(config.spreadingFactor);
+        modem.setCodingRate(config.codingRate);
+    }
 
     void
     handlePacket()
