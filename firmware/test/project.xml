@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<library>
+  <repositories>
+    <repository><path>../../ext/modm/repo.lb</path></repository>
+  </repositories>
+  <options>
+    <option name="modm:build:build.path">build</option>
+    <option name="modm:target">hosted-windows</option>
+  </options>
+  <modules>
+    <module>modm:platform:core</module>
+    <module>modm:driver:terminal</module>
+    <module>modm:build:scons</module>
+    <module>modm:unittest</module>
+  </modules>
+  <collectors>
+    <!-- std::cout lives in libstdc++-6.dll by default; accessing it across
+         the DLL boundary goes through MinGW's runtime pseudo-relocation
+         auto-import stub, which crashed on first use here (0xC0000005 in
+         Terminal::write). Statically linking libstdc++/libgcc puts cout
+         directly in the executable, avoiding that cross-DLL data import. -->
+    <collect name="modm:build:linkflags">-static-libgcc</collect>
+    <collect name="modm:build:linkflags">-static-libstdc++</collect>
+  </collectors>
+</library>

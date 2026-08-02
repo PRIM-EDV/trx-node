@@ -8,6 +8,7 @@ build/**
 /release
 /tmp
 /out-tsc
+__pycache__
 
 # profiling files
 chrome-profiler-events.json

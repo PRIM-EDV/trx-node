@@ -35,7 +35,7 @@ libraries = env.SConscript(dirs=generated_paths, exports="env")
 env.Alias("library", libraries)
 
 env.Append(CPPPATH=abspath("."))
-ignored = [".lbuild_cache", env["CONFIG_BUILD_BASE"]] + generated_paths
+ignored = [".lbuild_cache", env["CONFIG_BUILD_BASE"], "test"] + generated_paths
 sources = []
 # Generating Nanopb messages
 env.Append(CPPPATH=abspath("protocol"))

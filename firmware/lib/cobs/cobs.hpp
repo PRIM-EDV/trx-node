@@ -35,11 +35,12 @@ inline uint8_t cobs_encode(uint8_t *data, uint8_t nbBytes, uint8_t *buffer)
     return nbBytes + 1;
 }
 
-uint8_t cobs_decode(uint8_t *data, uint8_t nbBytes, uint8_t *buffer)
+inline uint8_t cobs_decode(uint8_t *data, uint8_t nbBytes, uint8_t *buffer)
 {
     uint8_t *codep = buffer; // Output code pointer
-    
-    for (uint8_t code = 0xff, block = 0; codep < buffer + nbBytes; --block)
+    uint8_t *data_end = data + nbBytes;
+
+    for (uint8_t code = 0xff, block = 0; data < data_end; --block)
 	{
         if (block) {
             *codep++ = *data++;
@@ -79,8 +80,9 @@ inline uint8_t cobs_decode_inplace(uint8_t *buffer, uint8_t nbBytes)
 {
     uint8_t *codep = buffer;
     uint8_t *data = buffer;
+    uint8_t *data_end = buffer + nbBytes;
 
-    for (uint8_t code = 0xff, block = 0; codep < buffer + nbBytes; --block)
+    for (uint8_t code = 0xff, block = 0; data < data_end; --block)
     {
         if (block) {
             *codep++ = *data++;
