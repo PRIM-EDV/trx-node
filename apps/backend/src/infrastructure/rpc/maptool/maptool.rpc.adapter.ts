@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { WinstonLogger } from "@phobos/infrastructure";
 import { MapEntity } from "@phobos-maptool/models";
 import { Request, SetMapEntity_Response } from "@phobos-maptool/protocol";
 import { fromMapEntityDto, toMapEntityDto } from "@phobos-maptool/dto";
@@ -12,9 +13,11 @@ import { IMaptoolRpcAdapter } from "src/core/map-entity/interfaces/maptool.rpc.a
 @Injectable()
 export class MaptoolRpcAdapter implements IMaptoolRpcAdapter {
     constructor(
-        private readonly gateway: MaptoolRpcGateway
+        private readonly gateway: MaptoolRpcGateway,
+        private readonly logger: WinstonLogger,
     ) {
-        console.log('MaptoolRpcAdapter instantiated');
+        this.logger.setContext(MaptoolRpcAdapter.name);
+        this.logger.log('MaptoolRpcAdapter instantiated');
     }
 
     public async setEntity(entity: MapEntity): Promise<void> {

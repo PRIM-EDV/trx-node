@@ -5,7 +5,8 @@
   "workspaces": [
     "apps/*",
     "libs/*",
-    "libs/phobos-maptool/*"
+    "libs/phobos-maptool/*",
+    "libs/phobos/*"
   ],
   "scripts": {
     "build": "npx lerna run build",

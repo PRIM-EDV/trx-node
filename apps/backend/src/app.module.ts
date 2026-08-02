@@ -1,6 +1,7 @@
 import { Global, Module } from '@nestjs/common';
+import { WinstonLogger, WinstonLoggerModule } from '@phobos/infrastructure';
+
 import { AppController } from './app.controller';
-import { LoggingModule } from './infrastructure/logging/logging.module';
 import { TrackerApiController } from './api/tracker/tracker.api.controller';
 import { TrxRpcGateway } from './infrastructure/rpc/trx/trx.rpc.gateway';
 import { MaptoolRpcGateway } from './infrastructure/rpc/maptool/maptool.rpc.gateway';
@@ -13,7 +14,7 @@ import { MapEntityApiService } from './api/map-entity/map-entity.api.service';
 @Global()
 @Module({
   imports: [
-    LoggingModule,
+    WinstonLoggerModule,
     TrackerApiModule,
     MapEntityApiModule,
   ],
@@ -23,6 +24,7 @@ import { MapEntityApiService } from './api/map-entity/map-entity.api.service';
     TrxRpcGateway
   ],
   exports: [
+    WinstonLoggerModule,
     MaptoolRpcGateway,
     TrxRpcGateway
   ]
@@ -30,6 +32,9 @@ import { MapEntityApiService } from './api/map-entity/map-entity.api.service';
 export class AppModule {
   constructor(
     private readonly mapEntityApi: MapEntityApiService,
-    private readonly trackerApi: TrackerApiController
-  ) {}
+    private readonly trackerApi: TrackerApiController,
+    private readonly logger: WinstonLogger,
+  ) {
+    this.logger.setContext(AppModule.name);
+  }
 }

@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { WinstonLogger } from '@phobos/infrastructure';
 import { MaptoolMessage, Request, Response } from '@phobos-maptool/protocol';
 
 import { v4 as uuidv4 } from 'uuid';
+import { inspect } from 'node:util';
 
 import { Subject } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
@@ -22,28 +24,28 @@ export class MaptoolRpcGateway {
 
     private ws!: WebSocketSubject<any>;
 
-    constructor() {
-        console.log('MaptoolRpcGateway initialized');
+    constructor(private readonly logger: WinstonLogger) {
+        this.logger.setContext(MaptoolRpcGateway.name);
         this.connect()
     }
 
     public connect() {
         try {
-            console.log(`Connecting to WebSocket on ws://${MAPTOOL_HOSTNAME}:${MAPTOOL_PORT} ...`);
+            this.logger.log(`Connecting to WebSocket on ws://${MAPTOOL_HOSTNAME}:${MAPTOOL_PORT} ...`);
             this.ws = webSocket({ url: `ws://${MAPTOOL_HOSTNAME}:${MAPTOOL_PORT}?token=${token.token}`, openObserver: { next: this.handleWsOpen.bind(this) } });
 
             this.ws.subscribe({
                 next: this.handleWsMessage.bind(this),
-                error: (err) => { console.error('WebSocket error:', err); setTimeout(this.connect.bind(this), 5000); },
+                error: (err) => { this.logger.error(`WebSocket error: ${inspect(err)}`); setTimeout(this.connect.bind(this), 5000); },
                 complete: this.handleWsClose.bind(this)
             });
         } catch (error) {
-            console.error('Error connecting to WebSocket:', error);
+            this.logger.error(`Error connecting to WebSocket: ${inspect(error)}`);
         }
     }
 
     public error(error) {
-        console.error('WebSocket error:', error);
+        this.logger.error(`WebSocket error: ${inspect(error)}`);
     }
 
     public send() {
@@ -64,7 +66,7 @@ export class MaptoolRpcGateway {
     }
 
     private handleWsOpen() {
-        console.log('WebSocket connected');
+        this.logger.log('WebSocket connected');
         this.onOpen.next();
     }
 

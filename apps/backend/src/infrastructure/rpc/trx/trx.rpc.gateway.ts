@@ -1,9 +1,10 @@
 import { Injectable } from "@nestjs/common";
+import { WinstonLogger } from "@phobos/infrastructure";
 import { TrxMessage, Request, Response } from "@trx/protocol";
 
 import { v4 as uuidv4 } from 'uuid';
+import { inspect } from 'node:util';
 import { SerialPort, DelimiterParser } from "serialport";
-import { LoggingService } from "src/infrastructure/logging/logging.service";
 import { Subject } from "rxjs";
 
 import * as cobs from 'cobs';
@@ -21,17 +22,18 @@ export class TrxRpcGateway {
     private serialport: SerialPort;
     private parser: DelimiterParser;
 
-    constructor(private readonly log: LoggingService) {
+    constructor(private readonly logger: WinstonLogger) {
+        this.logger.setContext(TrxRpcGateway.name);
         this.connect()
     }
 
     public async connect() {
-        this.log.info(`Connecting to serial on ${SERIAL_PORT} ...`);
+        this.logger.log(`Connecting to serial on ${SERIAL_PORT} ...`);
         this.serialport = new SerialPort({ path: SERIAL_PORT, baudRate: 9600 });
         this.parser = this.serialport.pipe(new DelimiterParser({ delimiter: '\0' }));
         this.parser.on('data', this.handleData.bind(this));
         this.serialport.on('error', () => setTimeout(this.connect.bind(this), 5000));
-        this.serialport.on('open', () => this.log.info("Serial connected"));
+        this.serialport.on('open', () => this.logger.log("Serial connected"));
     }
 
     public async request(req: Request): Promise<Response> {
@@ -81,7 +83,7 @@ export class TrxRpcGateway {
     
             this.onMessage.next(msg);
         } catch (err) {
-            console.error(err);
+            this.logger.error(`Failed to handle serial data: ${inspect(err)}`);
         }
     }
 

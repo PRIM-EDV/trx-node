@@ -1,4 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
+import { WinstonLogger } from "@phobos/infrastructure";
 import { MapEntity, MapEntityType } from "@phobos-maptool/models";
 
 import { IMaptoolRpcAdapter } from "./interfaces/maptool.rpc.adapter.interface";
@@ -20,13 +21,15 @@ export class MapEntityService {
 
     constructor(
         @MaptoolRpcAdapter() private readonly maptoolRpcAdapter: IMaptoolRpcAdapter,
-        @TrxRpcAdapter() private readonly trxRpcAdapter: ITrxRpcAdapter
+        @TrxRpcAdapter() private readonly trxRpcAdapter: ITrxRpcAdapter,
+        private readonly logger: WinstonLogger,
     ) {
+        this.logger.setContext(MapEntityService.name);
         setInterval(this.updateTracker(), 10000);
     }
 
     public setEntity(entity: MapEntity): void {
-        console.log("Setting entity" + JSON.stringify(entity));
+        this.logger.debug(`Setting entity ${JSON.stringify(entity)}`);
         const existing = this.entities.find(e => e.id === entity.id);
         if (existing) {
             Object.assign(existing, entity);

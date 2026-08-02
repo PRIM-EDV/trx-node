@@ -19,3 +19,6 @@
 [submodule "ext/meshtastic/protobufs"]
 	path = ext/meshtastic/protobufs
 	url = https://github.com/meshtastic/protobufs
+[submodule "libs/phobos/infrastructure"]
+	path = libs/phobos/infrastructure
+	url = https://github.com/PRIM-EDV/phobos-infrastructure.git

@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { WinstonLogger } from "@phobos/infrastructure";
 import { Tracker, Request } from "@trx/protocol";
 
 import { TrxRpcGateway } from "./trx.rpc.gateway";
@@ -8,8 +9,12 @@ import { ITrxRpcAdapter } from "src/core/map-entity/interfaces/trx.rpc.adapter.i
 @Injectable()
 export class TrxRpcAdapter implements ITrxRpcAdapter {
 
-    constructor(private readonly gateway: TrxRpcGateway) {
-        console.log("TrxRpcAdapter initialized");
+    constructor(
+        private readonly gateway: TrxRpcGateway,
+        private readonly logger: WinstonLogger,
+    ) {
+        this.logger.setContext(TrxRpcAdapter.name);
+        this.logger.log("TrxRpcAdapter initialized");
     }
 
     public async setTracker(tracker: Tracker): Promise<void> {
@@ -19,7 +24,7 @@ export class TrxRpcAdapter implements ITrxRpcAdapter {
             };
             await this.gateway.request(request);
         } catch {
-            console.error("Error occurred while setting tracker:", tracker);
+            this.logger.error(`Error occurred while setting tracker: ${JSON.stringify(tracker)}`);
         }
     }
 }
