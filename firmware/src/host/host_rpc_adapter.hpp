@@ -1,6 +1,9 @@
 #pragma once
 
+#include <cstring>
+
 #include "trx.pb.hpp"
+#include "trx.device.pb.hpp"
 #include "trx.tracker.pb.hpp"
 #include "trx.meshtastic.pb.hpp"
 
@@ -36,6 +39,20 @@ public:
         for (uint8_t i = 0; i < length; ++i) {
             request.request.processMeshtasticPayload.packet.data.bytes[i] = data[i];
         }
+
+        HostGatewayIpc::request(request);
+    }
+
+    static void
+    log(LogLevel level, const char *message)
+    {
+        Request request = Request_init_zero;
+        request.which_request = Request_log_tag;
+        request.request.log = Log_Request_init_default;
+        request.request.log.level = level;
+
+        strncpy(request.request.log.message, message, sizeof(request.request.log.message) - 1);
+        request.request.log.message[sizeof(request.request.log.message) - 1] = '\0';
 
         HostGatewayIpc::request(request);
     }
