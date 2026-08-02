@@ -1,0 +1,16 @@
+{
+  "name": "@meshtastic/protocol",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "npm run proto:generate && tsc",
+    "proto:generate": "protoc -I=../../ext/meshtastic/protobufs --ts_proto_opt=messages=true --ts_proto_opt=exportCommonSymbols=false --ts_proto_out=./src ../../ext/meshtastic/protobufs/meshtastic/admin.proto ../../ext/meshtastic/protobufs/meshtastic/apponly.proto ../../ext/meshtastic/protobufs/meshtastic/atak.proto ../../ext/meshtastic/protobufs/meshtastic/cannedmessages.proto ../../ext/meshtastic/protobufs/meshtastic/channel.proto ../../ext/meshtastic/protobufs/meshtastic/clientonly.proto ../../ext/meshtastic/protobufs/meshtastic/config.proto ../../ext/meshtastic/protobufs/meshtastic/connection_status.proto ../../ext/meshtastic/protobufs/meshtastic/device_ui.proto ../../ext/meshtastic/protobufs/meshtastic/deviceonly.proto ../../ext/meshtastic/protobufs/meshtastic/deviceonly_legacy.proto ../../ext/meshtastic/protobufs/meshtastic/interdevice.proto ../../ext/meshtastic/protobufs/meshtastic/localonly.proto ../../ext/meshtastic/protobufs/meshtastic/mesh.proto ../../ext/meshtastic/protobufs/meshtastic/mesh_beacon.proto ../../ext/meshtastic/protobufs/meshtastic/module_config.proto ../../ext/meshtastic/protobufs/meshtastic/mqtt.proto ../../ext/meshtastic/protobufs/meshtastic/paxcount.proto ../../ext/meshtastic/protobufs/meshtastic/portnums.proto ../../ext/meshtastic/protobufs/meshtastic/powermon.proto ../../ext/meshtastic/protobufs/meshtastic/remote_hardware.proto ../../ext/meshtastic/protobufs/meshtastic/rtttl.proto ../../ext/meshtastic/protobufs/meshtastic/serial_hal.proto ../../ext/meshtastic/protobufs/meshtastic/storeforward.proto ../../ext/meshtastic/protobufs/meshtastic/telemetry.proto ../../ext/meshtastic/protobufs/meshtastic/xmodem.proto"
+  },
+  "devDependencies": {
+    "ts-proto": "^1.125.0",
+    "ts-protoc-gen": "^0.15.0",
+    "typescript": "^5.7.3"
+  },
+  "private": true
+}
