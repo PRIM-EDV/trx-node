@@ -14,6 +14,7 @@
     "start:prod": "node dist/main"
   },
   "dependencies": {
+    "@meshtastic/protocol": "^0.1.0",
     "@nestjs/common": "11.1.16",
     "@nestjs/core": "11.1.16",
     "@nestjs/platform-express": "11.1.16",
