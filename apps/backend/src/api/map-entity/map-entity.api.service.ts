@@ -1,18 +1,18 @@
 import { Inject, Injectable } from "@nestjs/common";
 
-import { IMapEntityRpcAdapter } from "src/core/map-entity/interfaces/map-entity.rpc.adapter.interface";
+import { IMaptoolRpcAdapter } from "src/core/map-entity/interfaces/maptool.rpc.adapter.interface";
 import { MapEntityService } from "src/core/map-entity/map-entity.service";
-import { MapEntityRpcGateway } from "src/infrastructure/rpc/map-entity/map-entity.rpc.gateway";
+import { MaptoolRpcGateway } from "src/infrastructure/rpc/maptool/maptool.rpc.gateway";
 
-const MapEntityRpcAdapter = () => Inject('MapEntityRpcAdapter');
+const MaptoolRpcAdapter = () => Inject('MaptoolRpcAdapter');
 
 @Injectable()
 export class MapEntityApiService {
     constructor(
-        private readonly gateway: MapEntityRpcGateway,
+        private readonly gateway: MaptoolRpcGateway,
         private readonly mapEntity: MapEntityService,
-        @MapEntityRpcAdapter() private readonly rpc: IMapEntityRpcAdapter,
-    ) { 
+        @MaptoolRpcAdapter() private readonly rpc: IMaptoolRpcAdapter,
+    ) {
         this.gateway.onOpen.subscribe(() => this.handleOnOpen());
     }
 

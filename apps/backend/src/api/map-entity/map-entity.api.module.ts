@@ -2,12 +2,12 @@ import { Global, Module } from '@nestjs/common';
 import { MapEntityApiController } from './map-entity.api.controller';
 import { MapEntityModule } from 'src/core/map-entity/map-entity.module';
 import { MapEntityApiService } from './map-entity.api.service';
-import { MapEntityRpcModule } from 'src/infrastructure/rpc/map-entity/map-entity.rpc.module';
+import { MaptoolRpcModule } from 'src/infrastructure/rpc/maptool/maptool.rpc.module';
 @Global()
 @Module({
     imports: [
         MapEntityModule,
-        MapEntityRpcModule
+        MaptoolRpcModule
     ],
     providers: [
         MapEntityApiController,

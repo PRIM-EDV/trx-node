@@ -1,7 +1,7 @@
 import { MapEntity, MapEntityType } from "@phobos-maptool/models";
-import { Entity, Type } from "@trx/protocol";
+import { Tracker, Type } from "@trx/protocol";
 
-export function fromEntityType(entityType: Type): MapEntityType {
+export function fromTrackerType(entityType: Type): MapEntityType {
     switch (entityType) {
         case Type.SQUAD:
             return MapEntityType.FRIEND;
@@ -9,19 +9,22 @@ export function fromEntityType(entityType: Type): MapEntityType {
             return MapEntityType.FOE;
         case Type.UNRECOGNIZED:
             return MapEntityType.OBJECT;
+        default:
+            throw new Error(`Unknown Type: ${entityType}`);
     }
 }
 
-export function toEntity(mapEntity: MapEntity, entityId: number): Entity {
-    const entity: Entity = {
-        id: entityId,
+export function toTracker(mapEntity: MapEntity, trackerId: number): Tracker {
+    const tracker: Tracker = {
+        id: trackerId,
         position: mapEntity.position,
-        type: toEntityType(mapEntity.type)
+        type: toTrackerType(mapEntity.type),
+        size: mapEntity.symbol,
     }
-    return entity;
+    return tracker;
 }
 
-export function toEntityType(mapEntityType: MapEntityType): Type {
+export function toTrackerType(mapEntityType: MapEntityType): Type {
     switch (mapEntityType) {
         case MapEntityType.FRIEND:
             return Type.SQUAD;
@@ -29,5 +32,7 @@ export function toEntityType(mapEntityType: MapEntityType): Type {
             return Type.ENEMY;
         case MapEntityType.OBJECT:
             return Type.UNRECOGNIZED;
+        default:
+            throw new Error(`Unknown MapEntityType: ${mapEntityType}`);
     }
 }

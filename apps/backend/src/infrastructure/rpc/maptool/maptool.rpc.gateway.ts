@@ -11,7 +11,7 @@ const MAPTOOL_PORT = process.env.MAPTOOL_PORT ? process.env.MAPTOOL_PORT : 3002;
 const token = {"token":"eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiIiLCJhdWQiOltdLCJleHAiOjI1OTIwMDAwMDAsImlhdCI6MTc1NjE0MTc4Miwic2NvcGUiOiJvcGVyYXRvciJ9.Ay61VTU-P4pNBei8uKVwF3HQleUvlCEWvykNImdu-JjV05mOHmg7bT7U_sH_oLg60cqL2gXa1XK2vSI4lJcHoUbHGRiHIcYg0jV3aZI_v9yaL_43l9DluBCq9Mhl5DaUOPdVMwPRNM2zpkMPy-lHht_30HOUUd_lYA1ShaxQANuo0z53X-ltsXeL1H2-IxTm1WLRu7fhUqKDv49JOmZBPtiiIZXKZIHqCZYS3OMVJ29hJUpPoVM9vMLbEwTVx3jbNQnkT143v9PikU2Hi7Qjj_er6Nc6PKYFIGQEokyq7gASbnvLGqDzWeCiQ9pMdahUnWxubiLcmB0E9sR-D7y_RQ"}
 
 @Injectable()
-export class MapEntityRpcGateway {
+export class MaptoolRpcGateway {
     public onMessage: Subject<MaptoolMessage> = new Subject<MaptoolMessage>();
     public onRequest: Subject<{ msgId: string, request: Request }> = new Subject<{ msgId: string, request: Request }>();
 
@@ -23,7 +23,7 @@ export class MapEntityRpcGateway {
     private ws!: WebSocketSubject<any>;
 
     constructor() {
-        console.log('MapEntityRpcGateway initialized');
+        console.log('MaptoolRpcGateway initialized');
         this.connect()
     }
 

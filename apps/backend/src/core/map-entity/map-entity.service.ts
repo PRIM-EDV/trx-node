@@ -1,13 +1,13 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { MapEntity, MapEntityType } from "@phobos-maptool/models";
 
-import { IMapEntityRpcAdapter } from "./interfaces/map-entity.rpc.adapter.interface";
-import { ITrackerRpcAdapter } from "./interfaces/tracker.rpc.adapter.interface";
-import { toEntity } from "src/infrastructure/mapper/entity.mapper.service";
+import { IMaptoolRpcAdapter } from "./interfaces/maptool.rpc.adapter.interface";
+import { ITrxRpcAdapter } from "./interfaces/trx.rpc.adapter.interface";
+import { toTracker } from "src/infrastructure/mapper/entity.mapper.service";
 
 
-const MapEntityRpcAdapter = () => Inject('MapEntityRpcAdapter');
-const TrackerRpcAdapter = () => Inject('TrackerRpcAdapter');
+const MaptoolRpcAdapter = () => Inject('MaptoolRpcAdapter');
+const TrxRpcAdapter = () => Inject('TrxRpcAdapter');
 
 @Injectable()
 export class MapEntityService {
@@ -19,8 +19,8 @@ export class MapEntityService {
     private friendIdMap: Map<string, number> = new Map();
 
     constructor(
-        @MapEntityRpcAdapter() private readonly mapEntityRpcAdapter: IMapEntityRpcAdapter,
-        @TrackerRpcAdapter() private readonly trackerRpcAdapter: ITrackerRpcAdapter
+        @MaptoolRpcAdapter() private readonly maptoolRpcAdapter: IMaptoolRpcAdapter,
+        @TrxRpcAdapter() private readonly trxRpcAdapter: ITrxRpcAdapter
     ) {
         setInterval(this.updateTracker(), 10000);
     }
@@ -51,7 +51,7 @@ export class MapEntityService {
         const entity = this.entities.find(e => (e.type == MapEntityType.FRIEND && e.entity.trackerId === id));
         if (entity) {
             entity.position = position;
-            this.mapEntityRpcAdapter.setEntity(entity);
+            this.maptoolRpcAdapter.setEntity(entity);
         }
     }
 
@@ -105,7 +105,7 @@ export class MapEntityService {
                 default:
                     return;
             }
-            this.trackerRpcAdapter.setEntity(toEntity(entity, id));
+            this.trxRpcAdapter.setTracker(toTracker(entity, id));
         };
     };
 }

@@ -12,7 +12,7 @@ const SERIAL_PORT = process.env.SERIAL_PORT ? process.env.SERIAL_PORT : '/dev/tt
 
 
 @Injectable()
-export class TrackerRpcGateway {
+export class TrxRpcGateway {
     public onMessage: Subject<TrxMessage> = new Subject<TrxMessage>();
     public onRequest: Subject<{msgId: string, request: Request}> = new Subject<{msgId: string, request: Request}>();
 

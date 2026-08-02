@@ -1,13 +1,13 @@
 import { Global, Module } from '@nestjs/common';
 import { MapEntityService } from './map-entity.service';
-import { MapEntityRpcModule } from 'src/infrastructure/rpc/map-entity/map-entity.rpc.module';
-import { TrackerRpcModule } from 'src/infrastructure/rpc/tracker/tracker.rpc.module';
+import { MaptoolRpcModule } from 'src/infrastructure/rpc/maptool/maptool.rpc.module';
+import { TrxRpcModule } from 'src/infrastructure/rpc/trx/trx.rpc.module';
 
 @Global()
 @Module({
     imports: [
-        MapEntityRpcModule,
-        TrackerRpcModule
+        MaptoolRpcModule,
+        TrxRpcModule
     ],
     providers: [MapEntityService],
     exports: [MapEntityService]

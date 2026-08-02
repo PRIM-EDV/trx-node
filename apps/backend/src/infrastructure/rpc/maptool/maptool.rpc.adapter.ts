@@ -5,16 +5,16 @@ import { fromMapEntityDto, toMapEntityDto } from "@phobos-maptool/dto";
 
 
 
-import { MapEntityRpcGateway } from "./map-entity.rpc.gateway";
-import { IMapEntityRpcAdapter } from "src/core/map-entity/interfaces/map-entity.rpc.adapter.interface";
+import { MaptoolRpcGateway } from "./maptool.rpc.gateway";
+import { IMaptoolRpcAdapter } from "src/core/map-entity/interfaces/maptool.rpc.adapter.interface";
 
 
 @Injectable()
-export class MapEntityRpcAdapter implements IMapEntityRpcAdapter {
+export class MaptoolRpcAdapter implements IMaptoolRpcAdapter {
     constructor(
-        private readonly gateway: MapEntityRpcGateway
+        private readonly gateway: MaptoolRpcGateway
     ) {
-        console.log('MapEntityRpcAdapter instantiated');
+        console.log('MaptoolRpcAdapter instantiated');
     }
 
     public async setEntity(entity: MapEntity): Promise<void> {
