@@ -9,8 +9,6 @@
 #include <stdint.h>
 #include "lib/random/random.hpp"
 
-using namespace modm;
-
 namespace uuid {
 
     namespace
