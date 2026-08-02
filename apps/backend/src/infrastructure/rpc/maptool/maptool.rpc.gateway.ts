@@ -36,16 +36,12 @@ export class MaptoolRpcGateway {
 
             this.ws.subscribe({
                 next: this.handleWsMessage.bind(this),
-                error: (err) => { this.logger.error(`WebSocket error: ${inspect(err)}`); setTimeout(this.connect.bind(this), 5000); },
+                error: this.handleWsError.bind(this),
                 complete: this.handleWsClose.bind(this)
             });
         } catch (error) {
-            this.logger.error(`Error connecting to WebSocket: ${inspect(error)}`);
+            (() => {this.logger.error(`Error connecting to WebSocket: ${inspect(error)}`); })();
         }
-    }
-
-    public error(error) {
-        this.logger.error(`WebSocket error: ${inspect(error)}`);
     }
 
     public send() {
@@ -65,17 +61,19 @@ export class MaptoolRpcGateway {
         });
     }
 
+    public respond(clientId: string, msgId: string, res: Response) {
+    const msg: MaptoolMessage = {
+        id: msgId,
+        response: res
+    }
+    this.ws.next({ event: 'msg', data: JSON.stringify(MaptoolMessage.toJSON(msg)) });
+    }
+
+    public error() {}
+
     private handleWsOpen() {
         this.logger.log('WebSocket connected');
         this.onOpen.next();
-    }
-
-    public respond(clientId: string, msgId: string, res: Response) {
-        const msg: MaptoolMessage = {
-            id: msgId,
-            response: res
-        }
-        this.ws.next({ event: 'msg', data: JSON.stringify(MaptoolMessage.toJSON(msg)) });
     }
 
     private handleWsMessage(buffer: { event: 'msg', data: string }) {
@@ -97,7 +95,12 @@ export class MaptoolRpcGateway {
 
     private handleWsClose() {
         this.onClose.next();
-        setTimeout(this.connect, 5000);
+        setTimeout(this.connect.bind(this), 5000);
+    }
+
+    private handleWsError(err: any) {
+        this.logger.error(`WebSocket to maptool encountered an error error: ${err.error.code}`);
+        setTimeout(this.connect.bind(this), 5000);
     }
 
     private rejectOnTimeout(id: string, reject: (reason?: any) => void) {

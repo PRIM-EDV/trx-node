@@ -14,7 +14,7 @@ async function bootstrap() {
   app.enableCors();
   app.useLogger(logger);
 
-  rpcModule.register(app["container"], logger);
+  rpcModule.register(app["container"]);
 
   await app.listen(3900);
 }
