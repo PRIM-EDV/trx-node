@@ -1,13 +1,17 @@
 import type { MeshtasticNode } from 'src/core/meshtastic/models/meshtastic-node.model';
 
 export class MeshtasticNodeDbo implements MeshtasticNode {
-    public nodeNum: number = 0;
+    public id: string = '';
     public longName: string = '';
     public shortName: string = '';
 
+    public constructor(init?: Partial<MeshtasticNode>) {
+        Object.assign(this, init);
+    }
+
     public validate(): string[] {
         const errors: string[] = [];
-        if (!Number.isInteger(this.nodeNum)) errors.push("nodeNum must be an integer");
+        if (!this.id) errors.push("id is required");
         return errors;
     }
 }

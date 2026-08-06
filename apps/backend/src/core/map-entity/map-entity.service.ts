@@ -4,7 +4,7 @@ import { MapEntity, MapEntityType } from "@phobos-maptool/models";
 
 import { IMaptoolRpcAdapter } from "./interfaces/maptool.rpc.adapter.interface";
 import { ITrxRpcAdapter } from "./interfaces/trx.rpc.adapter.interface";
-import { toTracker } from "src/infrastructure/mapper/entity.mapper.service";
+import { toTracker } from "src/infrastructure/protocol/map-entity/entity.mapper";
 
 
 const MaptoolRpcAdapter = () => Inject('MaptoolRpcAdapter');

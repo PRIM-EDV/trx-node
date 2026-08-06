@@ -1,5 +1,5 @@
 export interface MeshtasticNode {
-    nodeNum: number;
+    id: string;
     longName: string;
     shortName: string;
 }

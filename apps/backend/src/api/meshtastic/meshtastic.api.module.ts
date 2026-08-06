@@ -1,23 +1,25 @@
 import { Global, Module } from '@nestjs/common';
-import { TrackerApiController } from './tracker.api.controller';
 import { TrxRpcModule } from 'src/infrastructure/rpc/trx/trx.rpc.module';
+import { MeshtasticApiController } from './meshtastic.api.controller';
 import { MeshtasticModule } from 'src/core/meshtastic/meshtastic.module';
+import { MeshtasticApiService } from './meshtastic.api.service';
 import { MaptoolRpcModule } from 'src/infrastructure/rpc/maptool/maptool.rpc.module';
-
 @Global()
 @Module({
     imports:[
-        TrxRpcModule,
         MaptoolRpcModule,
-        MeshtasticModule
+        MeshtasticModule,
+        TrxRpcModule
     ],
     providers: [
-        TrackerApiController
+        MeshtasticApiService,
+        MeshtasticApiController
     ],
     exports: [
-        TrackerApiController
+        MeshtasticApiService,
+        MeshtasticApiController
     ]
 })
-export class TrackerApiModule {
+export class MeshtasticApiModule {
     
 }

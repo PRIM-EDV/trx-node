@@ -1,0 +1,39 @@
+import { Inject, Injectable } from "@nestjs/common";
+import { User, Position } from "@meshtastic/protocol";
+import { WinstonLogger } from "@phobos/infrastructure";
+import { TrackerDto_Type, TrackerDto } from "@phobos-maptool/protocol/dist/phobos.maptool.tracker";
+
+import { MeshtasticService } from "src/core/meshtastic/meshtastic.service";
+import { MeshtasticMapper } from "src/infrastructure/protocol/meshtastic/meshtastic.mapper";
+import { IMaptoolRpcAdapter } from "src/core/map-entity/interfaces/maptool.rpc.adapter.interface";
+
+const MaptoolRpcAdapter = () => Inject('MaptoolRpcAdapter');
+
+@Injectable()
+export class MeshtasticApiService { 
+    constructor(
+        private readonly logger: WinstonLogger,
+        private readonly meshtastic: MeshtasticService,
+        @MaptoolRpcAdapter() private readonly maptoolRpcAdapter: IMaptoolRpcAdapter,
+    ) {
+        this.logger.setContext(MeshtasticApiService.name);
+    }
+
+    public async handlePosition(id: string, position: Position) {
+        const node = await this.meshtastic.getNode(id);
+
+        if (node != null) {
+            const trackerDto: TrackerDto = {
+                id: Number(node.id),
+                position: MeshtasticMapper.toTrackerPosition(position),
+                size: 0,
+                type: TrackerDto_Type.TYPE_UNDEFINED
+            }
+            await this.maptoolRpcAdapter.setTracker(trackerDto);                
+        }
+    }
+
+    public async handleNodeInfo(nodeInfo: User) {
+        await this.meshtastic.setNode(nodeInfo);
+    }
+}

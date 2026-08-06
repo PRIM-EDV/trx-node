@@ -8,6 +8,7 @@ import { fromMapEntityDto, toMapEntityDto } from "@phobos-maptool/dto";
 
 import { MaptoolRpcGateway } from "./maptool.rpc.gateway";
 import { IMaptoolRpcAdapter } from "src/core/map-entity/interfaces/maptool.rpc.adapter.interface";
+import { TrackerDto } from "@phobos-maptool/protocol/dist/phobos.maptool.tracker";
 
 
 @Injectable()
@@ -23,6 +24,13 @@ export class MaptoolRpcAdapter implements IMaptoolRpcAdapter {
     public async setEntity(entity: MapEntity): Promise<void> {
         const request: Request = {
             setMapEntity: { entity: toMapEntityDto(entity) }
+        };
+        await this.gateway.request(request);
+    }
+
+    public async setTracker(tracker: TrackerDto): Promise<void> {
+        const request: Request = {
+            setTracker: { tracker }
         };
         await this.gateway.request(request);
     }

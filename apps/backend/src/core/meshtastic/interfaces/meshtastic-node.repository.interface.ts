@@ -1,9 +1,9 @@
-import { MeshtasticNodeDbo } from "src/infrastructure/repositories/meshtastic/schemas/meshtastic-node.schema";
+import { MeshtasticNode } from "../models/meshtastic-node.model";
 
 export interface IMeshtasticNodeRepository {
-    delete(node: MeshtasticNodeDbo): Promise<void>;
-    store(node: MeshtasticNodeDbo): Promise<void>;
+    delete(node: MeshtasticNode): Promise<void>;
+    store(node: MeshtasticNode): Promise<void>;
 
-    get(): Promise<MeshtasticNodeDbo[]>;
-    get(nodeNum: number): Promise<MeshtasticNodeDbo | undefined>;
+    get(): Promise<MeshtasticNode[]>;
+    get(id: string): Promise<MeshtasticNode | undefined>;
 }

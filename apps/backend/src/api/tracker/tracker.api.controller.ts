@@ -1,42 +1,39 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { WinstonLogger } from "@phobos/infrastructure";
-import { Request } from "@trx/protocol";
-import { MeshPacket } from "@meshtastic/protocol";
+import { Request, SetTracker_Request } from "@trx/protocol";
 
-import { inspect } from 'node:util';
-
-import { MapEntityService } from "src/core/map-entity/map-entity.service";
-import { fromTrackerType } from "src/infrastructure/mapper/entity.mapper.service";
+import { IMaptoolRpcAdapter } from "src/core/map-entity/interfaces/maptool.rpc.adapter.interface";
+import { TrackerMapper } from "src/infrastructure/protocol/tracker/tracker.mapper.";
 import { TrxRpcGateway } from "src/infrastructure/rpc/trx/trx.rpc.gateway";
+
+const MaptoolRpcAdapter = () => Inject('MaptoolRpcAdapter');
 
 @Injectable()
 export class TrackerApiController {
     constructor(
         private readonly gateway: TrxRpcGateway,
-        private readonly mapEntity: MapEntityService,
         private readonly logger: WinstonLogger,
+        @MaptoolRpcAdapter() private readonly maptoolRpcAdapter: IMaptoolRpcAdapter,
     ) {
         this.logger.setContext(TrackerApiController.name);
         this.gateway.onRequest.subscribe(this.handleRequest.bind(this));
     }
 
-    private handleRequest({ msgId, request }: { msgId: string, request: Request }) {
+    private async handleRequest({ msgId, request }: { msgId: string, request: Request }) {
         if (request.setTracker) {
-            const tracker = request.setTracker.tracker;
-            const entityType = fromTrackerType(tracker.type);
-            this.mapEntity.updatePosition(tracker.id, tracker.position, entityType);
+            await this.handleSetTrackerRequest(request.setTracker);
         }
+    }
 
-        if (request.processMeshtasticPayload) {
-            const packet = request.processMeshtasticPayload.packet;
-            if (!packet) return;
+    /**
+     * Handles the SetTracker request by converting the tracker data to a TrackerDto and sending it to the maptool backend.
+     */
+    private async handleSetTrackerRequest(req: SetTracker_Request) {
+         if (req.tracker != null) {
+            const tracker = req.tracker;
+            const trackerDto = TrackerMapper.toTrackerDto(tracker);
 
-            try {
-                const meshPacket = MeshPacket.decode(packet.data);
-                this.logger.debug(`Received meshtastic packet: ${inspect(meshPacket)}`);
-            } catch (err) {
-                this.logger.error(`Failed to parse meshtastic packet: ${inspect(err)}`);
-            }
+            await this.maptoolRpcAdapter.setTracker(trackerDto);
         }
     }
 }

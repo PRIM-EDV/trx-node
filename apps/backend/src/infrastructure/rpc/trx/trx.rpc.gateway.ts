@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { WinstonLogger } from "@phobos/infrastructure";
-import { TrxMessage, Request, Response } from "@trx/protocol";
+import { TrxMessage, Request, Response, LogLevel, Log_Request } from "@trx/protocol";
 
 import { v4 as uuidv4 } from 'uuid';
 import { inspect } from 'node:util';
@@ -71,7 +71,11 @@ export class TrxRpcGateway {
             const msg = TrxMessage.decode(decoded);
 
             if(msg.request) {
-                this.onRequest.next({msgId: msg.id, request: msg.request});
+                if (msg.request.log) {
+                    this.log(msg.request.log);
+                } else {
+                    this.onRequest.next({msgId: msg.id, request: msg.request});
+                }
             }
     
             if(msg.response) {
@@ -84,6 +88,15 @@ export class TrxRpcGateway {
             this.onMessage.next(msg);
         } catch (err) {
             this.logger.error(`Failed to handle serial data: ${inspect(err)}`);
+        }
+    }
+
+    private log(log: Log_Request) {
+        switch(log.level) {
+            case LogLevel.LOG_LEVEL_DEBUG: this.logger.debug(log.message); break;
+            case LogLevel.LOG_LEVEL_INFO: this.logger.log(log.message); break;
+            case LogLevel.LOG_LEVEL_WARN: this.logger.warn(log.message); break;
+            case LogLevel.LOG_LEVEL_ERROR: this.logger.error(log.message); break;
         }
     }
 
