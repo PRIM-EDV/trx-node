@@ -5,7 +5,7 @@ import { Request } from "@trx/protocol";
 import { TrxRpcGateway } from "src/infrastructure/rpc/trx/trx.rpc.gateway";
 import { MeshtasticPacket } from "@trx/protocol/dist/trx.meshtastic";
 import { MeshtasticDecoder } from "src/infrastructure/protocol/meshtastic/meshtastic.decoder";
-import { PortNum, User } from "@meshtastic/protocol";
+import { PortNum, User, Position, TAKPacket } from "@meshtastic/protocol";
 import { MeshtasticApiService } from "./meshtastic.api.service";
 
 @Injectable()
@@ -33,11 +33,17 @@ export class MeshtasticApiController {
 
         switch (data.portnum) {
             case PortNum.POSITION_APP:
+                const position = Position.decode(data.payload);
+                this.service.handlePosition(header.from, position);
                 // this.logger.debug(`Received Meshtastic packet on port 1: ${JSON.stringify(data)}`);
                 break;
             case PortNum.NODEINFO_APP:
                 const nodeInfo =  User.decode(data.payload);
-                this.service.handleNodeInfo(nodeInfo);
+                this.service.handleNodeInfo(header.from, nodeInfo);
+                break;
+            case PortNum.ATAK_PLUGIN:
+                const takPacket = TAKPacket.decode(data.payload);
+                this.service.handleTakPacket(header.from, takPacket);
                 break;
             default:
                 // this.logger.debug(`Received Meshtastic packet on unknown port ${data.portnum}: ${JSON.stringify(data)}`);

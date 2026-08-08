@@ -11,7 +11,7 @@ import { MeshtasticNode } from "src/core/meshtastic/models/meshtastic-node.model
 
 @Injectable()
 export class MeshtasticNodeRepository implements IMeshtasticNodeRepository {
-    private readonly db: Level<string, MeshtasticNodeDbo> = new Level(path.join(process.cwd(), 'db'), { valueEncoding: 'json' });
+    private readonly db: Level<number, MeshtasticNodeDbo> = new Level(path.join(process.cwd(), 'db'), { valueEncoding: 'json' });
 
     constructor(
         private readonly logger: WinstonLogger,
@@ -20,7 +20,7 @@ export class MeshtasticNodeRepository implements IMeshtasticNodeRepository {
     }
 
     public async delete(node: MeshtasticNode): Promise<void> {
-        await this.db.del(node.id);
+        await this.db.del(node.from);
     }
 
     public async store(node: MeshtasticNode): Promise<void> {
@@ -33,24 +33,24 @@ export class MeshtasticNodeRepository implements IMeshtasticNodeRepository {
                 }
             );
 
-            await this.db.put(node.id, dbo);
+            await this.db.put(node.from, dbo);
         } catch (error) {
             // this.logger.error(`Error storing meshtastic node: ${error.message}`);
         }
     }
 
     public async get(): Promise<MeshtasticNode[]>;
-    public async get(id: string): Promise<MeshtasticNode | undefined>;
-    public async get(id?: string): Promise<MeshtasticNode | MeshtasticNode[] | undefined> {
+    public async get(from: number): Promise<MeshtasticNode | undefined>;
+    public async get(from?: number): Promise<MeshtasticNode | MeshtasticNode[] | undefined> {
         try {
-            if (id === undefined) {
+            if (from === undefined) {
                 const nodes: MeshtasticNode[] = [];
                 for await (const [, value] of this.db.iterator()) {
                     nodes.push(value);
                 }
                 return nodes;
             }
-            return await this.db.get(id);
+            return await this.db.get(from);
         } catch (error) {
             if (error instanceof Error && 'notFound' in error && error.notFound) return undefined;
             throw error;

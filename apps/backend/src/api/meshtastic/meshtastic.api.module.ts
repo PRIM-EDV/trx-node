@@ -2,6 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { TrxRpcModule } from 'src/infrastructure/rpc/trx/trx.rpc.module';
 import { MeshtasticApiController } from './meshtastic.api.controller';
 import { MeshtasticModule } from 'src/core/meshtastic/meshtastic.module';
+import { TakModule } from 'src/core/tak/tak.module';
 import { MeshtasticApiService } from './meshtastic.api.service';
 import { MaptoolRpcModule } from 'src/infrastructure/rpc/maptool/maptool.rpc.module';
 @Global()
@@ -9,6 +10,7 @@ import { MaptoolRpcModule } from 'src/infrastructure/rpc/maptool/maptool.rpc.mod
     imports:[
         MaptoolRpcModule,
         MeshtasticModule,
+        TakModule,
         TrxRpcModule
     ],
     providers: [

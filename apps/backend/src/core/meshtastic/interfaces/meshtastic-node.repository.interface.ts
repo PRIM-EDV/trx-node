@@ -5,5 +5,5 @@ export interface IMeshtasticNodeRepository {
     store(node: MeshtasticNode): Promise<void>;
 
     get(): Promise<MeshtasticNode[]>;
-    get(id: string): Promise<MeshtasticNode | undefined>;
+    get(from: number): Promise<MeshtasticNode | undefined>;
 }

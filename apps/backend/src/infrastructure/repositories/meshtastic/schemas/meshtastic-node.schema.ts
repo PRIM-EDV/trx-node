@@ -2,6 +2,7 @@ import type { MeshtasticNode } from 'src/core/meshtastic/models/meshtastic-node.
 
 export class MeshtasticNodeDbo implements MeshtasticNode {
     public id: string = '';
+    from: number = 0;
     public longName: string = '';
     public shortName: string = '';
 

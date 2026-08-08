@@ -14,9 +14,10 @@ export class MeshtasticService {
         @MeshtasticNodeRepository() private readonly meshtasticNodeRepository: IMeshtasticNodeRepository
     ) {}
 
-    public async setNode(nodePacket: User) {
+    public async setNode(from: number, nodePacket: User) {
         const node: MeshtasticNode = {
             id: nodePacket.id,
+            from: from,
             shortName: nodePacket.shortName,
             longName: nodePacket.longName
         };
@@ -24,7 +25,7 @@ export class MeshtasticService {
         await this.meshtasticNodeRepository.store(node);
     }
 
-    public async getNode(id: string): Promise<MeshtasticNode | undefined> {
-        return await this.meshtasticNodeRepository.get(id);
+    public async getNode(from: number): Promise<MeshtasticNode | undefined> {
+        return await this.meshtasticNodeRepository.get(from);
     }
 }
