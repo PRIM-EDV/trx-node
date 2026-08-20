@@ -14,6 +14,7 @@
 
 #include "driver/cdebyte/e32-x00mx0s.hpp"
 #include "lib/thread/thread.hpp"
+#include "lora_packet.hpp"
 
 #include "lora_transceiver_ipc.hpp"
 #include "src/host/host_rpc_adapter.hpp"
@@ -21,7 +22,7 @@
 using namespace modm;
 
 template <typename SpiMaster, typename Cs, typename D0, typename RxEn, typename TxEn>
-class LoraTransceiver : public Thread<512>
+class LoraTransceiver : public Thread<2048>
 {
 public:
     void
@@ -33,11 +34,12 @@ public:
         RF_CALL_BLOCKING(modem.setLnaBoostHf());
         RF_CALL_BLOCKING(modem.setPaBoost());
         RF_CALL_BLOCKING(modem.setAgcAutoOn());
-        RF_CALL_BLOCKING(modem.setExplicitHeaderMode());
+        RF_CALL_BLOCKING(modem.setImplicitHeaderMode());
+
+
         RF_CALL_BLOCKING(modem.setSpreadingFactor(sx127x::SpreadingFactor::SF12));
         RF_CALL_BLOCKING(modem.setBandwidth(sx127x::SignalBandwidth::Fr250kHz));
-        // RF_CALL_BLOCKING(modem.setBandwidth(sx127x::SignalBandwidth::Fr125kHz));
-        // RF_CALL_BLOCKING(modem.setCodingRate(sx127x::ErrorCodingRate::Cr4_5));
+        RF_CALL_BLOCKING(modem.setCodingRate(sx127x::ErrorCodingRate::Cr4_8));
         RF_CALL_BLOCKING(modem.enablePayloadCRC());
         RF_CALL_BLOCKING(modem.setPayloadLength(5));
         RF_CALL_BLOCKING(modem.setDio0Mapping(0));
@@ -63,7 +65,6 @@ public:
             {
                 handleIpc();
             };
-
         };
     };
 
@@ -128,7 +129,9 @@ private:
 
         if (!(status[0] & (uint8_t)sx127x::RegIrqFlags::PayloadCrcError))
         {
-            RF_CALL(modem.getPayload(buffer, 5));
+            modem.getPayload(buffer, 4);
+        } else {
+            HostRpcAdapter::log(LogLevel::LogLevel_LOG_LEVEL_WARN, "LoraTransceiver: CRC error in received packet");
         }
 
         modem.write(sx127x::Address::IrqFlags, 0xff);
@@ -137,35 +140,20 @@ private:
 
     void handleTracker(uint8_t *data)
     {
+        lora_packet::Tracker decoded = lora_packet::Tracker::decode(data);
+
         Tracker tracker = Tracker_init_default;
-        tracker.id = data[0] & 0x3F;
+        tracker.id = decoded.id;
+        tracker.size = decoded.size;
         tracker.has_position = true;
         tracker.position = Position_init_default;
-        tracker.position.x = ((uint16_t)data[2] << 4) | ((data[3] >> 4) & 0x0F);
-        tracker.position.y = ((uint16_t)(data[3] & 0x0F) << 8) |  data[4];
-        tracker.type = parseType((data[0] >> 6) & 0x03);
-        tracker.size = (data[1] >> 5) & 0x07;
+        tracker.position.x = decoded.px;
+        tracker.position.y = decoded.py;
+        tracker.type = static_cast<Type>(decoded.type);
 
         HostRpcAdapter::setTracker(tracker);
     }
 
-    Type
-    parseType(uint8_t byte)
-    {
-        switch (byte)
-        {
-            case 0x00:
-                return Type_UNKNOWN;
-            case 0x01:
-                return Type_SQUAD;
-            case 0x02:
-                return Type_ENEMY;
-            case 0x03:
-                return Type_OBJECTIVE;
-            default:
-                return Type_UNKNOWN;
-        }
-    }
 };
 
 #endif

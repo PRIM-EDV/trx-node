@@ -73,15 +73,6 @@ namespace lora2 {
 	using D0 = GpioInputB13;
 	using TxEn = GpioOutputB14;
 	using RxEn = GpioOutputB15;
-
-	struct Hw
-    {
-        using SpiMaster = lora::Spi;
-        using Cs        = Nss;
-        using RxEn      = RxEn;
-        using TxEn      = TxEn;
-        using D0        = D0;
-    };
 }
 
 namespace zero
@@ -89,7 +80,7 @@ namespace zero
 	using Rx = GpioInputA3;
 	using Tx = GpioOutputA2;
 
-	using Uart = BufferedUart<UsartHal2, UartTxBuffer<128>, UartRxBuffer<128>>;
+	using Uart = BufferedUart<UsartHal2, UartTxBuffer<256>, UartRxBuffer<256>>;
 }
 
 

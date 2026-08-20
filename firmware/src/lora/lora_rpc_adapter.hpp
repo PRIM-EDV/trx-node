@@ -1,6 +1,7 @@
 #pragma once
 
 #include "trx.tracker.pb.hpp"
+#include "lora_packet.hpp"
 #include "lora_transceiver_ipc.hpp"
 
 class LoraRpcAdapter
@@ -10,14 +11,16 @@ public:
     static void
     setTracker(Tracker tracker)
     {
-        uint8_t data[5];
+        lora_packet::Tracker packet{};
+        packet.type = static_cast<lora_packet::Type>(tracker.type);
+        packet.id = static_cast<uint8_t>(tracker.id);
+        packet.size = static_cast<uint8_t>(tracker.size);
+        packet.px = static_cast<uint16_t>(tracker.position.x);
+        packet.py = static_cast<uint16_t>(tracker.position.y);
 
-        data[0] = ((tracker.type & 0x03) << 6) | (tracker.id & 0x3F);
-        data[1] = ((tracker.size & 0x07) << 5) | 0x00;
-        data[2] = ((tracker.position.x >> 4)) & 0xff;
-        data[3] = ((tracker.position.x & 0x0F) << 4) | ((tracker.position.y >> 8) & 0x0F);
-        data[4] = tracker.position.y & 0xff;
-        
+        uint8_t data[lora_packet::TRACKER_BYTES];
+        packet.encode(data);
+
         LoraTransceiverIpc::sendPacket(data);
     }
 };
