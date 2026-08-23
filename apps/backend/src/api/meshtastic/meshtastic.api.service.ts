@@ -26,7 +26,7 @@ export class MeshtasticApiService {
 
         if (node != null) {
             const trackerDto: TrackerDto = {
-                id: Number(node.id),
+                id: node.shortName,
                 position: MeshtasticMapper.toTrackerPosition(position),
                 size: 0,
                 type: TrackerDto_Type.TYPE_UNDEFINED
