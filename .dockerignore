@@ -1,5 +1,5 @@
 firmware/**
-ext/**
+ext/modm/**
 eagle/**
 node_modules/**
 **/node_modules

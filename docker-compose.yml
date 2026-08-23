@@ -3,8 +3,8 @@ version: '3.1'
 services:
   server:
     build:
-        context: ".."
-        dockerfile: server/Dockerfile
+        context: "."
+        dockerfile: Dockerfile
     container_name: "trx-node"
     environment:
       RLD_MAPTOOL_HOSTNAME: ${TRX_MAPTOOL_HOSTNAME}
