@@ -31,7 +31,7 @@ bool encode_string(pb_ostream_t *stream, const pb_field_t *field, void *const *a
     return pb_encode_string(stream, (uint8_t *)str, strlen(str));
 }
 
-class HostGateway : public Thread<1024>
+class HostGateway : public Thread<2048>
 {
 public:
     void
@@ -91,9 +91,9 @@ public:
 
 private:
     HostStreamParser streamParser;
-    uint8_t decoding_buffer[128];
-    uint8_t encoding_buffer[128];
-    uint8_t pb_stream_buffer[128];
+    uint8_t decoding_buffer[256];
+    uint8_t encoding_buffer[256];
+    uint8_t pb_stream_buffer[256];
 
     void handleMessageFrame(uint8_t *data, size_t length)
     {
