@@ -28,6 +28,7 @@ export class MeshtasticNodeRepository implements IMeshtasticNodeRepository {
             const dbo: MeshtasticNodeDbo = new MeshtasticNodeDbo(
                 {
                     id: node.id,
+                    from: node.from,
                     longName: node.longName,
                     shortName: node.shortName
                 }
@@ -35,7 +36,7 @@ export class MeshtasticNodeRepository implements IMeshtasticNodeRepository {
 
             await this.db.put(node.from, dbo);
         } catch (error) {
-            // this.logger.error(`Error storing meshtastic node: ${error.message}`);
+            this.logger.error(`Error storing meshtastic node: ${error.message}`);
         }
     }
 

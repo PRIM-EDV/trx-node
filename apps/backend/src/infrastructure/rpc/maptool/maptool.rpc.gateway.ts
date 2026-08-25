@@ -98,8 +98,8 @@ export class MaptoolRpcGateway {
         setTimeout(this.connect.bind(this), 5000);
     }
 
-    private handleWsError(err: any) {
-        this.logger.error(`WebSocket to maptool encountered an error error: ${err.error.code}`);
+    private handleWsError(error: any) {
+        this.logger.error(`WebSocket to maptool encountered an error error: ${inspect(error)}`);
         setTimeout(this.connect.bind(this), 5000);
     }
 

@@ -31,6 +31,7 @@ export class MeshtasticApiService {
                 size: 0,
                 type: TrackerDto_Type.TYPE_UNDEFINED
             }
+            this.logger.debug("Setting Meshtatic tracker: " + node.shortName + " to position: " + JSON.stringify(trackerDto.position));
             await this.maptoolRpcAdapter.setTracker(trackerDto);
         }
     }
