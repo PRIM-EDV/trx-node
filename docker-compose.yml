@@ -8,5 +8,7 @@ services:
       MAPTOOL_HOSTNAME: ${TRX_MAPTOOL_HOSTNAME}
       MAPTOOL_PORT: ${TRX_MAPTOOL_PORT}
       MAPTOOL_TOKEN: ${TRX_MAPTOOL_TOKEN}
+    volumes:
+      - ./apps/backend/db:/opt/trx-node/apps/backend/db
     devices:
       - "/dev/ttyS3:/dev/ttyS0"
