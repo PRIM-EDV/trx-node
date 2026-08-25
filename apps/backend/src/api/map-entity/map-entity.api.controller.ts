@@ -2,7 +2,6 @@ import { fromMapEntityDto } from '@phobos-maptool/dto';
 import { DeleteMapEntity_Request, SetMapEntity_Request } from '@phobos-maptool/protocol';
 
 import { RpcHandler, Rpc } from "lib/rpc/decorators";
-import { Ws } from "src/common/interfaces/ws";
 import { MaptoolRpcGateway } from "src/infrastructure/rpc/maptool/maptool.rpc.gateway";
 import { MapEntityService } from "src/core/map-entity/map-entity.service";
 import { MapEntityApiService } from './map-entity.api.service';
