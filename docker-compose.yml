@@ -10,5 +10,6 @@ services:
       MAPTOOL_TOKEN: ${TRX_MAPTOOL_TOKEN}
     volumes:
       - ./apps/backend/db:/opt/trx-node/apps/backend/db
+      - ./apps/backend/config/:/opt/trx-node/apps/backend/config
     devices:
       - "/dev/ttyS3:/dev/ttyS0"

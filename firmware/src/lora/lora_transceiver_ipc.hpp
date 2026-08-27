@@ -5,6 +5,7 @@
 #include "modm/architecture/driver/atomic/queue.hpp"
 
 #include "trx.tracker.pb.hpp"
+#include "src/host/host_rpc_adapter.hpp"
 
 namespace LoraTransceiverIpc
 {
@@ -31,7 +32,6 @@ namespace LoraTransceiverIpc
         for (int i = 0; i < 5; ++i) {
             cmd.sendPacket.data[i] = data[i];
         }
-
         commandQueue.push(cmd);
     }
 };

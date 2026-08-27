@@ -30,6 +30,7 @@ export class MapEntityService {
 
     public setEntity(entity: MapEntity): void {
         this.logger.debug(`Setting entity ${JSON.stringify(entity)}`);
+        
         const existing = this.entities.find(e => e.id === entity.id);
         if (existing) {
             Object.assign(existing, entity);

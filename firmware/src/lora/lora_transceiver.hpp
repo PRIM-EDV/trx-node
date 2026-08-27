@@ -36,7 +36,6 @@ public:
         RF_CALL_BLOCKING(modem.setAgcAutoOn());
         RF_CALL_BLOCKING(modem.setImplicitHeaderMode());
 
-
         RF_CALL_BLOCKING(modem.setSpreadingFactor(sx127x::SpreadingFactor::SF12));
         RF_CALL_BLOCKING(modem.setBandwidth(sx127x::SignalBandwidth::Fr250kHz));
         RF_CALL_BLOCKING(modem.setCodingRate(sx127x::ErrorCodingRate::Cr4_8));

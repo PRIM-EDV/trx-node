@@ -16,6 +16,7 @@ const SERIAL_PORT = process.env.SERIAL_PORT ? process.env.SERIAL_PORT : '/dev/tt
 export class TrxRpcGateway {
     public onMessage: Subject<TrxMessage> = new Subject<TrxMessage>();
     public onRequest: Subject<{msgId: string, request: Request}> = new Subject<{msgId: string, request: Request}>();
+    public onOpen: Subject<void> = new Subject<void>();
 
     protected requests: Map<string, (value: Response) => void> = new Map<string, (value: Response) => void>();
 
@@ -33,7 +34,10 @@ export class TrxRpcGateway {
         this.parser = this.serialport.pipe(new DelimiterParser({ delimiter: '\0' }));
         this.parser.on('data', this.handleData.bind(this));
         this.serialport.on('error', () => setTimeout(this.connect.bind(this), 5000));
-        this.serialport.on('open', () => this.logger.log("Serial connected"));
+        this.serialport.on('open', () => {
+            this.logger.log("Serial connected");
+            this.onOpen.next();
+        });
     }
 
     public async request(req: Request): Promise<Response> {
