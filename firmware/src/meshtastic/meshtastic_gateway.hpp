@@ -35,7 +35,7 @@ public:
         RF_CALL_BLOCKING(modem.setPaBoost());
         RF_CALL_BLOCKING(modem.setAgcAutoOn());
         RF_CALL_BLOCKING(modem.setExplicitHeaderMode()); // Meshtastic packets are variable length, so no implicit header
-        RF_CALL_BLOCKING(modem.setSpreadingFactor(sx127x::SpreadingFactor::SF11));
+        RF_CALL_BLOCKING(modem.setSpreadingFactor(sx127x::SpreadingFactor::SF7));
         RF_CALL_BLOCKING(modem.setBandwidth(sx127x::SignalBandwidth::Fr250kHz));
         modem.setCodingRate(sx127x::ErrorCodingRate::Cr4_5);
         RF_CALL_BLOCKING(modem.enablePayloadCRC());
@@ -43,17 +43,9 @@ public:
         modem.write(sx127x::Address::SyncWord, 0x2b); // Meshtastic sync word
         modem.write(sx127x::Address::PreambleLsb, 16); // Meshtastic preamble LSB
 
-
         // // Set output power to 10 dBm (boost mode)
         RF_CALL_BLOCKING(modem.setOutputPower(0x0f));
         RF_CALL_BLOCKING(modem.setOperationMode(sx127x::Mode::RecvCont));
-
-        // Board::zero::ioStream << "Meshtastic Gateway initialized\n";
-
-        uint8_t freq[3];
-        modem.read(sx127x::Address::FrMsb, freq, 3);
-        // Board::zero::ioStream << "Frequency: " << (int)freq[0] << " " << (int)freq[1] << " " << (int)freq[2] << "\n";
-
     };
 
     bool
@@ -92,10 +84,12 @@ public:
     void
     setModemConfig(MeshtasticGatewayIpc::SetModemConfigArgs &config)
     {
+        modem.setOperationMode(sx127x::Mode::Standby);
         modem.setBandwidth(config.bandwidth);
         modem.setCarrierFreq((frequency_t)config.frequency);
         modem.setSpreadingFactor(config.spreadingFactor);
         modem.setCodingRate(config.codingRate);
+        modem.setOperationMode(sx127x::Mode::RecvCont);
     }
 
     void
@@ -106,9 +100,7 @@ public:
 
         if (receivePacket(buffer, length))
         {
-            // No parsing - forward the raw packet bytes to the host as-is
             HostRpcAdapter::processMeshtasticPayload(buffer, length);
-            // Board::zero::ioStream << "Stacksize" << stack_usage() << "\n";
         }
     }
 
@@ -144,7 +136,6 @@ private:
         modem.read(sx127x::Address::IrqFlags, status, 1);
         if (!(status[0] & (uint8_t)sx127x::RegIrqFlags::PayloadCrcError))
         {
-            HostRpcAdapter::log(LogLevel::LogLevel_LOG_LEVEL_INFO, "Received Meshtastic packet");
             uint8_t nbBytes[1];
             modem.read(sx127x::Address::RxNbBytes, nbBytes, 1);
             length = nbBytes[0];

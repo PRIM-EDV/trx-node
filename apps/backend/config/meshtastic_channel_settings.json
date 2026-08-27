@@ -1,0 +1,6 @@
+{
+    "bandwidth": "BW_250KHZ",
+    "frequency": 869525000,
+    "spreadingFactor": 11,
+    "codingRate": "CR_4_5"
+}
