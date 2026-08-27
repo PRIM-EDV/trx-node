@@ -35,12 +35,25 @@ export class MapEntityService {
         if (existing) {
             Object.assign(existing, entity);
 
+            if (entity.type === MapEntityType.FRIEND && entity.entity.trackerId > 0) {
+                const mappedId = this.friendIdMap.get(entity.id);
+                if (mappedId && mappedId !== entity.entity.trackerId) {
+                    this.logger.debug(`Updating trackerId for entity ${entity.id} from ${mappedId} to ${entity.entity.trackerId}`);
+                    this.friendIdMap.set(entity.id, entity.entity.trackerId);
+                }
+            }
+
         } else {
             this.entities.push(entity);
 
             switch (entity.type) {
                 case MapEntityType.FRIEND:
-                    this.assignId(entity, this.friendIdMap, 43, 63);
+                    if (entity.entity.trackerId > 0) {
+                        this.logger.debug(`Assigning trackerId for entity ${entity.id} to ${entity.entity.trackerId}`);
+                        this.friendIdMap.set(entity.id, entity.entity.trackerId);
+                    } else {
+                        this.assignId(entity, this.friendIdMap, 43, 63);
+                    }
                     break;
                 case MapEntityType.FOE:
                     this.assignId(entity, this.foeIdMap, 1, 32);
@@ -109,7 +122,6 @@ export class MapEntityService {
                 default:
                     return;
             }
-            console.log(`Setting 'Tracker' with id: ${id} for entity-type: ${entity.type}`);
             this.trxRpcAdapter.setTracker(toTracker(entity, id));
         };
     };

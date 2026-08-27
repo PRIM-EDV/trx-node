@@ -34,11 +34,9 @@ export class TrackerApiController {
    */
   private async handleSetTrackerRequest(req: SetTracker_Request) {
     this.logger.debug(`Received Tracker packet from ${req.tracker?.id}: ${JSON.stringify(req.tracker)}`);
-
     if (req.tracker != null) {
       const tracker = req.tracker;
       const trackerDto = TrackerMapper.toTrackerDto(tracker);
-
       await this.maptoolRpcAdapter.setTracker(trackerDto);
     }
   }
